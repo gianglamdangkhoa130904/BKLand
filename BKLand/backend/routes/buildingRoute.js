@@ -1,106 +1,111 @@
 import express from 'express';
 import { Building } from '../models/buildingModel.js';
-
+import { Apartment } from '../models/apartmentModel.js';
 const router = express.Router();
 
-router.post('/', async (request, response) => {
-    try {
-      if (
-        !request.body.buildingName ||
-        !request.body.buildingDescription ||
-        !request.body.subdivision
-      ) {
-        return response.status(400).send({
-          message: 'Send all required fields: Name, Description, Subdivision',
-        });
-      }
-      else{
-          const newObject = {
-            buildingName: request.body.buildingName,
-            buildingDescription: request.body.buildingDescription,
-            subdivision: request.body.subdivision
-            };
-          const object = await Building.create(newObject);
-          return response.status(201).send(object);
-      }
-    } catch (error) {
-      console.log(error.message);
-      response.status(500).send({ message: error.message });
-    }
-  });
-  
-  router.put('/:id', async (request, response) => {
-    try {
-      const { id } = request.params;
-  
-      const result = await Building.findByIdAndUpdate(id, request.body);
-  
-      if (!result) {
-        return response.status(404).json({ message: 'Building not found' });
-      }
-  
-      return response.status(200).send({ message: 'Building updated successfully' });
-    } catch (error) {
-      console.log(error.message);
-      response.status(500).send({ message: error.message });
-    }
-  });
+// Tạo một building mới
+router.post('/', async (req, res) => {
+  try {
+    const { buildingName, buildingDescription, buildingStatus, subdivision } = req.body;
 
-  router.delete('/:id', async (request, response) => {
-    try {
-      const { id } = request.params;
-  
-      const result = await Building.findByIdAndDelete(id);
-  
-      if (!result) {
-        return response.status(404).json({ message: 'Building not found' });
-      }
-  
-      return response.status(200).send({ message: 'Building deleted successfully' });
-    } catch (error) {
-      console.log(error.message);
-      response.status(500).send({ message: error.message });
+    if (!buildingName || !buildingDescription || !buildingStatus || !subdivision) {
+      return res.status(400).json({
+        message: 'Send all required fields: Name, Description, Status, Subdivision',
+      });
     }
-  });
-  router.get('/', async (request, response) => {
-    try {
-      const objects = await Building.find({});
+
+    const newBuilding = new Building({
+      buildingName,
+      buildingDescription,
+      buildingStatus,
+      subdivision,
+    });
+
+    const createdBuilding = await newBuilding.save();
+    res.status(201).json(createdBuilding);
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to create building' });
+  }
+});
   
+// Cập nhật một building
+router.put('/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updatedData = req.body;
+
+    const updatedBuilding = await Building.findByIdAndUpdate(id, updatedData, { new: true })
+      .populate('subdivision', 'subdivisionName subdivisionDescription');
+
+    if (!updatedBuilding) {
+      return res.status(404).json({ message: 'Building not found' });
+    }
+
+    res.status(200).json({ message: 'Building updated successfully', data: updatedBuilding });
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to update building' });
+  }
+});
+
+// Xoá một building
+router.delete('/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const building = await Building.findById(id);
+    
+    if (!building) {
+      return res.status(404).json({ message: 'Building not found' });
+    }
+
+    const subdivisionCount = await Subdivision.countDocuments({ _id: building.subdivision }); 
+
+    if (subdivisionCount > 0) {
+      return res.status(400).json({ message: 'Cannot delete building because it is linked to a subdivision' });
+    }
+
+    await Building.findByIdAndDelete(id);
+    res.status(200).json({ message: 'Subdivision deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to delete subdivision' });
+  }
+});
+// Route này để hiển thị tất cả các building
+router.get('/', async (req, res) => {
+  const { subdivision } = req.query; 
+  try {
+    const buildings = subdivision
+      ? await Building.find({ subdivision }).populate('subdivision', 'subdivisionName')
+      : await Building.find({}).populate('subdivision', 'subdivisionName');
+
+    res.status(200).json({ data: buildings });
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to fetch buildings' });
+  }
+});
+  router.get('/subdivision/:subdivisionId', async (request, response) => {
+    try {
+      const { subdivisionId } = request.params;
+      const buildings = await Building.find({ subdivision: subdivisionId }).populate('subdivision');
       return response.status(200).json({
-        count: objects.length,
-        data: objects,
+        count: buildings.length,
+        data: buildings,
       });
     } catch (error) {
-      console.log(error.message);
+      console.error('Error fetching buildings by subdivision:', error.message);
       response.status(500).send({ message: error.message });
     }
   });
-  router.get('/subdivision/:subdivisionID', async (request, response) => {
-    try {
-        const { subdivisionID } = request.params;
-      const objects = await Building.find({subdivision: subdivisionID});
-  
-      return response.status(200).json({
-        count: objects.length,
-        data: objects,
-      });
-    } catch (error) {
-      console.log(error.message);
-      response.status(500).send({ message: error.message });
+// Lấy chi tiết
+router.get('/:id', async (req, res) => {
+  try {
+    const building = await Building.findById(req.params.id).populate('subdivision', 'subdivisionName');
+    if (!building) {
+      return res.status(404).json({ message: 'Building not found' });
     }
-  });
-  router.get('/:id', async (request, response) => {
-    try {
-        const { id } = request.params;
-        const objects = await Building.findOne({_id: id});
-  
-      return response.status(200).json({
-        count: objects.length,
-        data: objects,
-      });
-    } catch (error) {
-      console.log(error.message);
-      response.status(500).send({ message: error.message });
-    }
-  });
+    res.status(200).json(building);
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to fetch building details' });
+  }
+});
 export default router;

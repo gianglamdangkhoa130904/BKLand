@@ -30,6 +30,7 @@ import {
     useDisclosure,
     Input,
   } from '@chakra-ui/react';
+import { useSnackbar } from 'notistack';
 import { FaChevronDown, FaSearch } from 'react-icons/fa';
 import { TbBuildingFactory } from "react-icons/tb";
 import { PiBuildingsFill } from "react-icons/pi";
@@ -38,6 +39,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 const TransactionPage = () => {
     const navigate = useNavigate();
+    const { enqueueSnackbar } = useSnackbar();
     // Dùng cho Mua căn hộ
     const [projectList, setProjectList] = useState([]);
     const [subdivisionList, setSubdivisionList] = useState([]);
@@ -51,8 +53,12 @@ const TransactionPage = () => {
     // Overlay
     const { isOpen, onOpen, onClose } = useDisclosure()
     // các const dùng cho Đăng ký tham quan 
-    const [visitedProject, setVisitedProject] = useState('');
-
+    const [visitedProjectID, setVisitedProjectID] = useState('');
+    const [dktqName, setDktqName] = useState('');
+    const [dktqProject, setDktqProject] = useState('');
+    const [dktqDate, setDktqDate] = useState('');
+    const [dktqEmail, setDktqEmail] = useState('');
+    const [dktqPhone, setDktqPhone] = useState('');
     const fetchProject = async () => {
         const response = await axios.get('http://localhost:1325/projects');
         setProjectList(response.data.data);
@@ -74,11 +80,60 @@ const TransactionPage = () => {
     const fetchApartment = async () => {
         const response = await axios.get(`http://localhost:1325/apartments/building/${buildingID}`);
         setApartmentList(response.data.data);
-
     }
     const handleApartment = (apartment) => {
         const data = apartment;
         navigate('/apartment/details', { state: data });
+    }
+    const handleEmailChange = (event) => {
+        const value = event.target.value;
+        setDktqEmail(value);
+    };
+    const handleDateChange = (event) => {
+        const selectedDate = new Date(event.target.value); // Chuyển chuỗi thành đối tượng Date
+        setDktqDate(selectedDate);
+    };
+    const handlePhoneChange = (event) => {
+        const value = event.target.value;
+        setDktqPhone(value);
+    };
+    const handleVisitRegist = () => {
+        const today = new Date();
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        const phoneRegex = /^\+?(\d{1,3})?[-.\s]?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}$/;
+        if(dktqProject === '' || dktqDate === '' || dktqName === '' || dktqPhone === '' || dktqEmail === ''){
+            enqueueSnackbar('Thiếu thông tin', { variant: 'warning' });
+            enqueueSnackbar(dktqProject + dktqDate + dktqName + dktqPhone + dktqEmail, { variant: 'warning' });
+        }
+        else if(dktqDate < today){
+            enqueueSnackbar('Ngày tham quan không hợp lệ', { variant: 'warning' });
+        }
+        else if(dktqName.length > 30){
+            enqueueSnackbar('Họ và tên có độ dài không quá 30 ký tự', { variant: 'warning' });
+        }
+        else if(dktqEmail.length > 30 ){
+            enqueueSnackbar('Email có độ dài không quá 30 ký tự', { variant: 'warning' });
+        }
+        else if(!emailRegex.test(dktqEmail)){
+            enqueueSnackbar('Email sai định dạng', { variant: 'warning' });
+        }  
+        else if(dktqPhone.length != 10 || !phoneRegex.test(dktqPhone)){
+            enqueueSnackbar('Số điện thoại có độ dài 10 ký tự số', { variant: 'warning' });
+        }
+        else{
+            const data = {
+                customerName: dktqName,
+                phoneNumber: dktqPhone,
+                email: dktqEmail,
+                projectID: visitedProjectID,
+                dateVisit: dktqDate
+            }
+            axios.post(`http://localhost:1325/contactTickets`, data)
+            .then((response) => {
+                console.log(response.data);
+            });
+            
+        }
     }
     useEffect(() => {
         fetchProject();
@@ -121,7 +176,9 @@ const TransactionPage = () => {
                                     <MenuItem textColor="black">No result</MenuItem>
                                 ) : (
                                     projectList.map((project, index) => (
-                                        <MenuItem key={index} textColor="black"  onClick={() => fetchSubdivision(project)}>{project.projectName}</MenuItem> 
+                                        <MenuItem key={index} textColor="black"  onClick={() => fetchSubdivision(project)}>
+                                            {project.projectName}
+                                        </MenuItem> 
                                     ))
                                 )}
                             </MenuList>
@@ -135,7 +192,9 @@ const TransactionPage = () => {
                                     <MenuItem textColor="black">No result</MenuItem>
                                 ) : (
                                     subdivisionList.map((subdivision, index) => (
-                                        <MenuItem key={index} textColor="black"  onClick={() => fetchBuilding(subdivision)}>{subdivision.subdivisionName}</MenuItem> 
+                                        <MenuItem key={index} textColor="black"  onClick={() => fetchBuilding(subdivision)}>
+                                            {subdivision.subdivisionName}
+                                        </MenuItem> 
                                     ))
                                 )}
                             </MenuList>
@@ -149,13 +208,20 @@ const TransactionPage = () => {
                                     <MenuItem textColor="black">No result</MenuItem>
                                 ) : (
                                     buildingList.map((building, index) => (
-                                        <MenuItem key={index} textColor="black"  onClick={() => handleBuilding(building)}>{building.buildingName}</MenuItem> 
+                                        <MenuItem key={index} textColor="black"  onClick={() => handleBuilding(building)}>
+                                            {building.buildingName}
+                                        </MenuItem> 
                                     ))
                                 )}
                             </MenuList>
                         </Menu>
                     </HStack>
-                    <Button leftIcon={<FaSearch/>} bg="blue.400" borderRadius="md" justify="center" alignItems="center" h="100%" w="18%" textColor="white">
+                    <Button leftIcon={<FaSearch/>} 
+                    bg="blue.400" 
+                    borderRadius="md" 
+                    justify="center" alignItems="center" 
+                    h="100%" w="18%" 
+                    textColor="white">
                         <Text fontSize="large" fontWeight="bold" onClick={fetchApartment}>Tìm kiếm</Text>
                     </Button>
                 </HStack>
@@ -182,7 +248,7 @@ const TransactionPage = () => {
                             <VStack>
                                 <Menu>
                                     <MenuButton as={Button} rightIcon={<FaChevronDown />} bg="white" w="100%" borderWidth='1px'>
-                                        {visitedProject === '' ? (<Text textAlign="start">Chọn dự án</Text>) : (<Text textAlign="start">{visitedProject}</Text>)}
+                                        {dktqProject === '' ? (<Text textAlign="start">Chọn dự án</Text>) : (<Text textAlign="start">{dktqProject}</Text>)}
                                     </MenuButton>
                                     <MenuList>
                                         {projectList.length == 0 ? (
@@ -191,7 +257,9 @@ const TransactionPage = () => {
                                             projectList.map((project, index) => (
                                                 <MenuItem key={index} 
                                                 textColor="black"  
-                                                onClick={() => setVisitedProject(project.projectName)}
+                                                onClick={() => {setDktqProject(project.projectName);
+                                                    setVisitedProjectID(project._id)
+                                                }}
                                                 w="100%">
                                                     {project.projectName}
                                                 </MenuItem> 
@@ -199,14 +267,11 @@ const TransactionPage = () => {
                                         )}
                                     </MenuList>
                                 </Menu>
-                                <Input type='text' placeholder='Họ và tên'></Input>
-                                <Input type='email' placeholder='Email'></Input>
-                                <Input type='tel' placeholder='Số điện thoại'></Input>
-                                <Text fontSize="large" fontWeight="bold" alignSelf="start">Lựa chọn thời gian tham quan</Text>
-                                <HStack gap="15">
-                                    <Input type='time' w="180px" alignSelf="start"></Input>
-                                    <Input type='date' w="180px" alignSelf="end"></Input>
-                                </HStack>
+                                <Input type='text' placeholder='Họ và tên' onChange={() => {setDktqName(event.target.value)}}></Input>
+                                <Input type='email' placeholder='Email' onChange={handleEmailChange}></Input>
+                                <Input type='tel' placeholder='Số điện thoại' onChange={handlePhoneChange}></Input>
+                                <Text fontSize="large" fontWeight="bold" alignSelf="start" >Lựa chọn thời gian tham quan</Text>
+                                <Input type='datetime-local' w="180px" onChange={handleDateChange}></Input>
                                 <Text fontSize="large" fontWeight="bold" alignSelf="start">Hình thức tham quan</Text>
                                 <Image src={HinhAnhThamQuan} w="120px"></Image>
                                 <Text>Trải nghiệm thực tế tại dự án</Text>
@@ -214,7 +279,7 @@ const TransactionPage = () => {
                             </VStack>
                         </ModalBody>
                         <ModalFooter textAlign="center" justifyContent="center">
-                            <Button colorScheme='blue' >
+                            <Button colorScheme='blue' onClick={handleVisitRegist}>
                             Nhận tư vấn
                             </Button>
                         </ModalFooter>
@@ -257,8 +322,11 @@ const TransactionPage = () => {
             boxShadow='dark-lg'
             _hover={{cursor:"pointer"}}>
                 <Image w="100%" h="100%" objectFit='cover' objectPosition="center" src={CanHo} borderRadius="md"></Image>
-                <Flex position="absolute" bottom="0" right="0" p="2" mb="10px" mr="10px" textColor="white">{apartment.sellingPrice} vnđ</Flex>
-                <VStack position="absolute" bottom="0" left="0" p="2" mb="10px" ml="10px" textColor="white" gap="0" fontWeight="bold">
+                <Flex position="absolute" bottom="0" right="0" p="2" mb="10px" mr="10px" textColor="white">
+                    {apartment.sellingPrice} vnđ
+                </Flex>
+                <VStack position="absolute" 
+                bottom="0" left="0" p="2" mb="10px" ml="10px" textColor="white" gap="0" fontWeight="bold">
                     <Text alignSelf="start">{project}</Text>
                     <Text alignSelf="start">{building}</Text>
                     <HStack divider={<StackDivider borderColor='gray.200'/>}  alignSelf="start">

@@ -1,25 +1,25 @@
 import express from 'express';
 import { ContactTicket } from '../models/contactTicketModel.js';
-
+import { Project } from '../models/projectModel.js';
 const router = express.Router();
 
 router.post('/', async (request, response) => {
     try {
-      if (
-        !request.body.customerName ||
-        !request.body.phoneNumber ||
-        !request.body.email ||
-        !request.body.projectID
-      ) {
+      if (!request.body.customerName ||!request.body.phoneNumber ||!request.body.email ||!request.body.projectID ||!request.body.dateVisit) {
         return response.status(400).send({
           message: 'Send all required fields: Name, Phone number, Email, Project',
         });
+      }
+      const projectExists = await Project.findById(request.body.projectID);
+      if (!projectExists) {
+        return res.status(404).json({ message: 'Project not found' });
       }
       else{
           const newObject = {
             customerName: request.body.customerName,
             phoneNumber: request.body.phoneNumber,
             email: request.body.email,
+            dateVisit: request.body.dateVisit,
             projectID: request.body.projectID
             };
           const object = await ContactTicket.create(newObject);

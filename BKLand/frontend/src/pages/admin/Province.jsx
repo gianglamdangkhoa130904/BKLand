@@ -97,9 +97,11 @@ function Province() {
     setSelectedProvince(null);
     setForm({
       provinceName: '',
+      status: 'Active', // Đặt mặc định là Active
     });
     onOpen();
   };
+  
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -121,8 +123,9 @@ function Province() {
             <Thead>
               <Tr>
                 <Th width="20%">STT</Th>
-                <Th width="60%">Province Name</Th>
-                <Th width="20%" textAlign="right">Actions</Th>
+                <Th width="35%">Province Name</Th>
+                <Th width="10%">Status</Th> {/* Thêm cột Status */}
+                <Th width="35%" textAlign="right">Actions</Th>
               </Tr>
             </Thead>
             <Tbody>
@@ -130,6 +133,7 @@ function Province() {
                 <Tr key={province._id}>
                   <Td>{index + 1}</Td>
                   <Td>{province.provinceName}</Td>
+                  <Td>{province.status || 'Active'}</Td> {/* Hiển thị giá trị Status */}
                   <Td textAlign="right">
                     <IconButton
                       icon={<FiEdit />}

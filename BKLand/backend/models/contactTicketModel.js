@@ -15,9 +15,14 @@ const contactTicketSchema = mongoose.Schema(
             type: String,
             required: true
         },
+        dateVisit:{
+            type: Date,
+            required: true
+        },
         projectID:{
-            type: String,
+            type: mongoose.Schema.Types.ObjectId,
             required: true,
+            ref: 'Project'
         }
     }
 );

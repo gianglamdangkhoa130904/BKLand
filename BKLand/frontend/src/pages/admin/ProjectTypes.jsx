@@ -98,6 +98,7 @@ function ProjectTypes() {
     setSelectedProjectType(null);
     setForm({
       projectTypeName: '',
+      status: 'Active', // Đặt mặc định là Active
     });
     onOpen();
   };
@@ -121,34 +122,38 @@ function ProjectTypes() {
           <Table variant="simple" width="100%">
             <Thead>
               <Tr>
-                <Th width="20%">STT</Th>
-                <Th width="60%">Type Name</Th>
+                <Th width="10%">STT</Th>
+                <Th width="40%">Type Name</Th>
+                <Th width="30%">Status</Th>
                 <Th width="20%" textAlign="right">Actions</Th>
               </Tr>
             </Thead>
             <Tbody>
-              {projectTypes.map((type, index) => (
-                <Tr key={type._id}>
-                  <Td>{index + 1}</Td>
-                  <Td>{type.projectTypeName}</Td>
-                  <Td textAlign="right">
-                    <IconButton
-                      icon={<FiEdit />}
-                      aria-label="Edit"
-                      mr={2}
-                      onClick={() => openEditModal(type)}
-                    />
-                    <IconButton
-                      icon={<FiTrash2 />}
-                      aria-label="Delete"
-                      colorScheme="red"
-                      onClick={() => handleDeleteProjectType(type._id)}
-                    />
-                  </Td>
-                </Tr>
-              ))}
-            </Tbody>
+                {projectTypes.map((type, index) => (
+                  <Tr key={type._id}>
+                    <Td>{index + 1}</Td>
+                    <Td>{type.projectTypeName}</Td>
+                    <Td>{type.status || 'Active'}</Td> {/* Hiển thị "Active" nếu không có giá trị */}
+                    <Td textAlign="right">
+                      <IconButton
+                        icon={<FiEdit />}
+                        aria-label="Edit"
+                        mr={2}
+                        onClick={() => openEditModal(type)}
+                      />
+                      <IconButton
+                        icon={<FiTrash2 />}
+                        aria-label="Delete"
+                        colorScheme="red"
+                        onClick={() => handleDeleteProjectType(type._id)}
+                      />
+                    </Td>
+                  </Tr>
+                ))}
+              </Tbody>
+
           </Table>
+
 
           {/* Modal for Adding/Editing Project Type */}
           <Modal isOpen={isOpen} onClose={onClose}>

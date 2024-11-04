@@ -17,7 +17,8 @@ const buildingSchema = mongoose.Schema(
             default: 'Active'
         },
         subdivision:{
-            type: String,
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Subdivision',
             required: true
         }
     }

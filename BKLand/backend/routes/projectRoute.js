@@ -3,13 +3,13 @@ import { Project } from '../models/projectModel.js';
 
 const router = express.Router();
 
-// Create a new project
-router.post('/', async (request, response) => {
+// route này dùng để thêm dữ liệu mới vào
+router.post('/', async (req, res) => {
   try {
-    const { projectName, projectDescription, projectImage, province, projectType } = request.body;
+    const { projectName, projectDescription, projectImage, province, projectType } = req.body;
 
     if (!projectName || !projectDescription || !projectImage || !province || !projectType) {
-      return response.status(400).send({
+      return res.status(400).json({
         message: 'Send all required fields: Name, Description, Image, Province, Project type',
       });
     }
@@ -17,20 +17,20 @@ router.post('/', async (request, response) => {
     const newProject = {
       projectName,
       projectDescription,
-      projectImage, 
+      projectImage,
       province,
       projectType,
     };
 
     const project = await Project.create(newProject);
-    return response.status(201).json(project);
+    return res.status(201).json(project);
   } catch (error) {
     console.error('Error creating project:', error.message);
-    response.status(500).send({ message: error.message });
+    res.status(500).send({ message: error.message });
   }
 });
 
-
+// route này dùng để cập nhật dữ liệu
 router.put('/:id', async (request, response) => {
   try {
     const { id } = request.params;
@@ -56,7 +56,7 @@ router.put('/:id', async (request, response) => {
 });
 
 
-// Delete a project
+// route này dùng để xoá dữ liệu có điều kiện 
 router.delete('/:id', async (request, response) => {
   try {
     const { id } = request.params;
@@ -74,6 +74,7 @@ router.delete('/:id', async (request, response) => {
 });
 
 
+//route này dùng để fetch tất cả các dự án có trong database
 router.get('/', async (request, response) => {
   try {
     const projects = await Project.find({})
@@ -125,18 +126,16 @@ router.get('/projectType/:projectTypeID', async (request, response) => {
   }
 });
 
-router.get('/:id', async (request, response) => {
+// route này dùng để lấy thông tin chi tiết của Project
+router.get('/:id', async (req, res) => {
+  const { id } = req.params;
   try {
-    const { id } = request.params;
-    const projects = await Project.findOne({ _id: id });
-
-    return response.status(200).json({
-      count: projects.length,
-      data: projects,
-    });
+    const project = await Project.findById(id)
+      .populate('province', 'provinceName') // Chỉ lấy trường provinceName
+      .populate('projectType', 'projectTypeName'); // Chỉ lấy trường projectTypeName
+    res.status(200).json({ project });
   } catch (error) {
-    console.log(error.message);
-    response.status(500).send({ message: error.message });
+    res.status(500).json({ message: 'Failed to fetch project details' });
   }
 });
 export default router;

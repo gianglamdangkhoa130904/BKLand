@@ -49,6 +49,7 @@ function Information() {
                   <Text><strong>Tên khách hàng:</strong> {ticket.customerName}</Text>
                   <Text><strong>Số điện thoại:</strong> {ticket.phoneNumber}</Text>
                   <Text><strong>Email:</strong> {ticket.email}</Text>
+                  <Text><strong>Ngày tham quan:</strong> {ticket.dateVisit}</Text>
                   <Text><strong>Project ID:</strong> {ticket.projectID}</Text>
                   {index < tickets.length - 1 && <Divider mt={4} />}
                 </ListItem>

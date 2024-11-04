@@ -31,9 +31,14 @@ const apartmentSchema = mongoose.Schema(
             type: String,
             required: false
         },
-        buildingID:{
+        apartmentStatus:{
             type: String,
             required: false
+        },
+        buildingID:{
+            type: mongoose.Schema.Types.ObjectId,
+            required: true,
+            ref: 'Building'
         }
     }
 );

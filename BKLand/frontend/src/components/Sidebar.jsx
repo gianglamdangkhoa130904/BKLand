@@ -20,6 +20,8 @@ import {
   FiUser,
   FiLayers,
   FiPackage,
+  FiBox,
+  FiMap
 } from 'react-icons/fi';
 import { Link } from 'react-router-dom';
 
@@ -63,48 +65,66 @@ function Sidebar() {
           Navigation
         </Text>
         <VStack align="start" spacing={1}>
-          <Link to="/admin/province">
-            <HStack spacing={4} w="full" px={3} py={2} borderRadius="md" _hover={{ bg: hoverBg }}>
-              <Icon as={FiDollarSign} boxSize={5} />
-              <Text>Tỉnh thành</Text>
-            </HStack>
-          </Link>
-          <Link to="/admin/projecttypes">
-            <HStack spacing={4} w="full" px={3} py={2} borderRadius="md" _hover={{ bg: hoverBg }}>
-              <Icon as={FiSend} boxSize={5} />
-              <Text>Loại dự án</Text>
-            </HStack>
-          </Link>
-          <Link to="/admin/projects">
-            <HStack spacing={4} w="full" px={3} py={2} borderRadius="md" _hover={{ bg: hoverBg }}>
-              <Icon as={FiBriefcase} boxSize={5} />
-              <Text>Dự án</Text>
-            </HStack>
-          </Link>
-          <Link to="/admin/customers">
-            <HStack spacing={4} w="full" px={3} py={2} borderRadius="md" _hover={{ bg: hoverBg }}>
-              <Icon as={FiUser} boxSize={5} />
-              <Text>Khách hàng</Text>
-            </HStack>
-          </Link>
-          <Link to="/admin/employees">
-            <HStack spacing={4} w="full" px={3} py={2} borderRadius="md" _hover={{ bg: hoverBg }}>
-              <Icon as={FiLayers} boxSize={5} />
-              <Text>Nhân viên</Text>
-            </HStack>
-          </Link>
-          <Link to="/admin/tickets">
-            <HStack spacing={4} w="full" px={3} py={2} borderRadius="md" _hover={{ bg: hoverBg }}>
-              <Icon as={FiPackage} boxSize={5} />
-              <Text>Phiếu sở hữu căn hộ</Text>
-            </HStack>
-          </Link>
           <Link to="/admin/information">
+          <HStack spacing={4} w="full" px={3} py={2} borderRadius="md" _hover={{ bg: hoverBg }}>
+            <Icon as={FiFileText} boxSize={5} />
+            <Text>Thông tin liên hệ</Text>
+          </HStack>
+        </Link>
+        <Link to="/admin/projecttypes">
+          <HStack spacing={4} w="full" px={3} py={2} borderRadius="md" _hover={{ bg: hoverBg }}>
+            <Icon as={FiSend} boxSize={5} />
+            <Text>Loại dự án</Text>
+          </HStack>
+        </Link>
+        <Link to="/admin/projects">
+          <HStack spacing={4} w="full" px={3} py={2} borderRadius="md" _hover={{ bg: hoverBg }}>
+            <Icon as={FiBriefcase} boxSize={5} />
+            <Text>Dự án</Text>
+          </HStack>
+        </Link>
+        <Link to="/admin/province">
+          <HStack spacing={4} w="full" px={3} py={2} borderRadius="md" _hover={{ bg: hoverBg }}>
+            <Icon as={FiDollarSign} boxSize={5} />
+            <Text>Tỉnh thành</Text>
+          </HStack>
+        </Link>
+        <Link to="/admin/customers">
+          <HStack spacing={4} w="full" px={3} py={2} borderRadius="md" _hover={{ bg: hoverBg }}>
+            <Icon as={FiUser} boxSize={5} />
+            <Text>Khách hàng</Text>
+          </HStack>
+        </Link>
+        <Link to="/admin/employees">
+          <HStack spacing={4} w="full" px={3} py={2} borderRadius="md" _hover={{ bg: hoverBg }}>
+            <Icon as={FiLayers} boxSize={5} />
+            <Text>Nhân viên</Text>
+          </HStack>
+        </Link>
+        <Link to="/admin/tickets">
+          <HStack spacing={4} w="full" px={3} py={2} borderRadius="md" _hover={{ bg: hoverBg }}>
+            <Icon as={FiPackage} boxSize={5} />
+            <Text>Phiếu sở hữu căn hộ</Text>
+          </HStack>
+        </Link>
+        <Link to="/admin/subdivisionlist">
             <HStack spacing={4} w="full" px={3} py={2} borderRadius="md" _hover={{ bg: hoverBg }}>
-              <Icon as={FiFileText} boxSize={5} />
-              <Text>Thông tin liên hệ</Text>
+              <Icon as={FiMap} boxSize={5} />
+              <Text>Phân khu</Text>
             </HStack>
-          </Link>
+        </Link>
+        <Link to="/admin/buildinglist">
+            <HStack spacing={4} w="full" px={3} py={2} borderRadius="md" _hover={{ bg: hoverBg }}>
+              <Icon as={FiHome} boxSize={5} />
+              <Text>Toà nhà</Text>
+            </HStack>
+        </Link>
+        <Link to="/admin/apartmentlist">
+            <HStack spacing={4} w="full" px={3} py={2} borderRadius="md" _hover={{ bg: hoverBg }}>
+              <Icon as={FiBox} boxSize={5} />
+              <Text>Căn hộ</Text>
+            </HStack>
+        </Link>
         </VStack>
       </Box>
     </ChakraProvider>

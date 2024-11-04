@@ -120,7 +120,8 @@ router.post('/', async (request, response) => {
       !request.body.username ||
       !request.body.password ||
       !request.body.name ||
-      !request.body.email
+      !request.body.email ||
+      !request.body.phone
     ) {
       return response.status(400).send({
         message: 'Send all required fields: username, password, name, email',
@@ -132,6 +133,7 @@ router.post('/', async (request, response) => {
             password: request.body.password,
             name: request.body.name,
             email: request.body.email,
+            phone: request.body.phone,
             statusAccount: "active"
           };
         const user = await User.create(newUser);
@@ -363,10 +365,7 @@ router.delete('/:id', async (request, response) => {
 router.get('/username/:username', async (request, response) => {
   try {
     const { username } = request.params;
-    const user = await User.findOne({ username });
-    if (!user) {
-      return response.status(404).json({ message: 'User not found' });
-    }
+    const user = await User.findOne({ username: username });
     response.status(200).json(user);
   } catch (error) {
     console.log(error.message);

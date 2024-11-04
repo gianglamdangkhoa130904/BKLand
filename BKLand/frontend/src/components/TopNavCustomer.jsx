@@ -13,12 +13,12 @@ import {
   Image,
   Spacer
 } from '@chakra-ui/react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { FiBell, FiUser, FiSettings } from 'react-icons/fi';
 import bokaLogo from '../assets/bokaboka.png';
 import england from '../assets/england.png';
 import vietnam from '../assets/vietnam.png';
-
+import Cookie from 'js-cookie'
 const translations = {
   en: {
     buy: 'Buy',
@@ -43,6 +43,7 @@ const translations = {
 };
 
 const TopNavCustomer = () => {
+  const navigate = useNavigate();
   const [language, setLanguage] = useState('vi');
   const bg = useColorModeValue('white', 'gray.800');
   const borderColor = useColorModeValue('gray.200', 'gray.800');
@@ -53,7 +54,12 @@ const TopNavCustomer = () => {
   const handleLanguageChange = (lang) => {
     setLanguage(lang);
   };
-
+  const handleLogout = () => {
+    Cookie.remove('name');
+    Cookie.remove('nameID');
+    Cookie.remove('Apartment');
+    navigate('/home');
+  }
   return (
     <Box
       bg={bg}
@@ -116,7 +122,7 @@ const TopNavCustomer = () => {
                 {t.profile}
               </MenuItem>
               <MenuItem icon={<FiSettings />}>{t.settings}</MenuItem>
-              <MenuItem>{t.logout}</MenuItem>
+              <MenuItem onClick={handleLogout}>{t.logout}</MenuItem>
             </MenuList>
           </Menu>
         </HStack>

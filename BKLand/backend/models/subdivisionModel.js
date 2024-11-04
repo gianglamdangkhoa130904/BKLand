@@ -17,7 +17,8 @@ const subdivisionSchema = mongoose.Schema(
             default: 'Active'
         },
         project:{
-            type: String,
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Project',
             required: true
         }
     }

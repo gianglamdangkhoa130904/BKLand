@@ -2,9 +2,10 @@ import React, { useEffect, useState } from 'react'
 import Spinner from '../components/Spiner';
 import axios from 'axios';
 import { useSnackbar } from 'notistack';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import Cookie from 'js-cookie'
 const Login = () => {
+  const location = useLocation();
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState('');
@@ -14,7 +15,6 @@ const Login = () => {
         axios
         .get(`http://localhost:1325/users/username/${username}`)
         .then((response) => {
-            setUser(response.data);
             setLoading(false);
             if(password === ''){
               enqueueSnackbar('Chưa nhập đầy đủ thông tin', { variant: 'error' });
@@ -24,7 +24,12 @@ const Login = () => {
                 enqueueSnackbar('Đăng nhập thành công', { variant: 'success' });
                 Cookie.set('nameID', response.data._id);
                 Cookie.set('name', response.data.name);
-                navigate('/user/list'); 
+                if(location.state != null){
+                  navigate('/customer/details', {state: location.state});
+                }
+                else{
+                  navigate('/home'); 
+                }
               }
               else{
                 enqueueSnackbar('Sai mật khẩu', { variant: 'error' });

@@ -16,6 +16,16 @@ import HomePage from './pages/customer/HomePage';
 import ProfileCus from './pages/customer/ProfileCus';
 import TransactionPage from './pages/customer/TransactionPage';
 import ApartmentDetails from './pages/customer/ApartmentDetails';
+import CustomerDetails from './pages/customer/CustomerDetails';
+import PaymentPage from './pages/customer/PaymentPage';
+import ReturnPayment from './pages/customer/ReturnPayment';
+import FailedPayment from './pages/customer/FailedPayment';
+import Subdivision from './pages/admin/Subdivision';
+import Building from './pages/admin/Building';
+import Apartment from './pages/admin/Apartment';
+import ApartmentList from './pages/admin/ApartmentList';
+import BuildingList from './pages/admin/BuildingList';
+import SubdivisionList from './pages/admin/SubdivisionList';
 const App = () => {
   return (
     <Routes>
@@ -26,6 +36,11 @@ const App = () => {
       <Route path='/login' element={<Login/>}/>
       <Route path='/register' element={<Register/>}/>
       <Route path='/apartment/details' element={<ApartmentDetails/>}/>
+      <Route path='/customer/details' element={<CustomerDetails/>}/>
+      <Route path='/payment' element={<PaymentPage/>}/>
+      <Route path='/payment/return' element={<ReturnPayment/>}/>
+      <Route path='/payment/failed' element={<FailedPayment/>}/>
+
       <Route path="/admin/tickets" element={<Tickets />} />
       <Route path="/admin/profile" element={<Profile />} />
       <Route path="/admin/information" element={<Information />} />
@@ -35,6 +50,12 @@ const App = () => {
       <Route path="/admin/projects" element={<Projects />} />
       <Route path="/admin/projecttypes" element={<ProjectTypes />} />
       <Route path="/admin/dashboard" element={<Dashboard />} />
+      <Route path="/admin/subdivision" element={<Subdivision />} />
+      <Route path="/admin/building" element={<Building />} />
+      <Route path="/admin/apartment" element={<Apartment />} />
+      <Route path="/admin/apartmentlist" element={<ApartmentList/>} /> {/* CRUD Căn hộ */}
+      <Route path="/admin/buildinglist" element={<BuildingList />} />   {/* CRUD Toà nhà*/}
+      <Route path="/admin/subdivisionlist" element={<SubdivisionList />} />  {/* CRUD Phân khu */}
     </Routes>
   )
 }

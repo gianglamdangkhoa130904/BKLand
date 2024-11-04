@@ -13,7 +13,7 @@ const Login = () => {
     const navigate = useNavigate();
     const handleLogin = () => {
         axios
-        .get(`http://localhost:1325/users/username/${username}`)
+        .get(`https://bkland.onrender.com/users/username/${username}`)
         .then((response) => {
             setLoading(false);
             if(password === ''){

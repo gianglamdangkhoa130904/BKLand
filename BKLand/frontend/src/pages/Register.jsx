@@ -56,7 +56,7 @@ const Register = () => {
           };
           setLoading(true);
           axios
-            .post('http://localhost:1325/users', data)
+            .post('https://bkland.onrender.com/users', data)
             .then(() => {
               setLoading(false);
               enqueueSnackbar('Sign up successfully', { variant: 'success' });

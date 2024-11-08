@@ -1,0 +1,9 @@
+[build]
+  command = "npm run build"          # Lệnh để build ứng dụng
+  publish = "build"                  # Thư mục đầu ra sau khi build
+
+# Cấu hình redirects nếu cần (chuyển hướng URL)
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

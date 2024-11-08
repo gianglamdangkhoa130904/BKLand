@@ -1,5 +1,4 @@
 [build]
-  base = "frontend" 
   command = "npm run build"          # Lệnh để build ứng dụng
   publish = "dist"                  # Thư mục đầu ra sau khi build
 [build.environment]

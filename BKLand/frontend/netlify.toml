@@ -1,7 +1,7 @@
 [build]
   base = "frontend" 
   command = "npm run build"          # Lệnh để build ứng dụng
-  publish = "build"                  # Thư mục đầu ra sau khi build
+  publish = "dist"                  # Thư mục đầu ra sau khi build
 [build.environment]
   REACT_APP_API_URL = "https://bkland.onrender.com"
   

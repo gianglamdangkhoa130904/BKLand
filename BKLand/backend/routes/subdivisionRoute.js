@@ -98,7 +98,7 @@ router.get('/', async (req, res) => {
 // Xem chi tiết của một phân khu
 router.get('/:id', async (req, res) => {
   try {
-    const subdivision = await Subdivision.findById(req.params.id).populate('project', 'projectName');
+    const subdivision = await Subdivision.findById(req.params.id).populate('project');
     if (!subdivision) {
       return res.status(404).json({ message: 'Subdivision not found' });
     }

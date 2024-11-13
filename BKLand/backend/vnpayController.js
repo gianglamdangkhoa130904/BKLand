@@ -69,13 +69,13 @@ router.post('/payment', async (req, res) => {
                         //thanh cong
                         paymentStatus = '1'
                         // Ở đây cập nhật trạng thái giao dịch thanh toán thành công vào CSDL của bạn
-                        return res.redirect(`http://localhost:5173/payment/return?orderId=${orderId}&amount=${amount}&paymentstatus=${paymentStatus}`);
+                        return res.redirect(`http://localhost:5174/payment/return?orderId=${orderId}&amount=${amount}&paymentstatus=${paymentStatus}`);
                     }
                     else {
                         //that bai
                         paymentStatus = '2'
                         // Ở đây cập nhật trạng thái giao dịch thanh toán thất bại vào CSDL của bạn
-                        return res.redirect(`http://localhost:5173/payment/return?orderId=${orderId}&amount=${amount}&paymentstatus=${paymentStatus}`);
+                        return res.redirect(`http://localhost:5174/payment/return?orderId=${orderId}&amount=${amount}&paymentstatus=${paymentStatus}`);
                     }
                 }
                 else{

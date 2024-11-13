@@ -99,7 +99,7 @@ router.get('/', async (req, res) => {
 // Lấy chi tiết
 router.get('/:id', async (req, res) => {
   try {
-    const building = await Building.findById(req.params.id).populate('subdivision', 'subdivisionName');
+    const building = await Building.findById(req.params.id).populate('subdivision');
     if (!building) {
       return res.status(404).json({ message: 'Building not found' });
     }

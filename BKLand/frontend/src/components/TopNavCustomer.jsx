@@ -11,10 +11,11 @@ import {
   MenuItem,
   useColorModeValue,
   Image,
-  Spacer
+  Spacer,
+  Button
 } from '@chakra-ui/react';
 import { Link, useNavigate } from 'react-router-dom';
-import { FiBell, FiUser, FiSettings } from 'react-icons/fi';
+import { FiBell, FiUser, FiSettings, FiLogIn } from 'react-icons/fi';
 import bokaLogo from '../assets/bokaboka.png';
 import england from '../assets/england.png';
 import vietnam from '../assets/vietnam.png';
@@ -50,7 +51,8 @@ const TopNavCustomer = () => {
   const textColor = useColorModeValue('gray.800', 'white');
 
   const t = translations[language];
-
+  const isLoggedIn = Cookie.get('nameID');
+  
   const handleLanguageChange = (lang) => {
     setLanguage(lang);
   };
@@ -59,6 +61,9 @@ const TopNavCustomer = () => {
     Cookie.remove('nameID');
     Cookie.remove('Apartment');
     navigate('/home');
+  }
+  const handleLogin =() => {
+    navigate('/login');
   }
   return (
     <Box
@@ -113,18 +118,32 @@ const TopNavCustomer = () => {
             </Text>
           </HStack>
           <IconButton icon={<FiBell />} aria-label="Notifications" variant="ghost" size="lg" />
-          <Menu>
-            <MenuButton>
-              <IconButton icon={<FiUser />} aria-label="Notifications" variant="ghost" size="lg" />
-            </MenuButton>
-            <MenuList>
-              <MenuItem as={Link} to="/profileCus" icon={<FiUser />}>
-                {t.profile}
-              </MenuItem>
-              <MenuItem icon={<FiSettings />}>{t.settings}</MenuItem>
-              <MenuItem onClick={handleLogout}>{t.logout}</MenuItem>
-            </MenuList>
-          </Menu>
+          
+          {isLoggedIn ? (
+            // Hiển thị menu profile nếu đã đăng nhập
+            <Menu>
+              <MenuButton>
+                <IconButton icon={<FiUser />} aria-label="User Menu" variant="ghost" size="lg" />
+              </MenuButton>
+              <MenuList>
+                <MenuItem as={Link} to="/profileCus" icon={<FiUser />}>
+                  {t.profile}
+                </MenuItem>
+                <MenuItem icon={<FiSettings />}>{t.settings}</MenuItem>
+                <MenuItem onClick={handleLogout}>{t.logout}</MenuItem>
+              </MenuList>
+            </Menu>
+          ) : (
+            // Hiển thị nút đăng nhập nếu chưa đăng nhập
+            <Button
+              leftIcon={<FiLogIn />}
+              variant="ghost"
+              onClick={handleLogin}
+              size="lg"
+            >
+              {t.login}
+            </Button>
+          )}
         </HStack>
       </HStack>
     </Box>

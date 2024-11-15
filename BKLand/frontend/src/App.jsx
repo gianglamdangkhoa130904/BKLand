@@ -19,13 +19,13 @@ import ApartmentDetails from './pages/customer/ApartmentDetails';
 import CustomerDetails from './pages/customer/CustomerDetails';
 import PaymentPage from './pages/customer/PaymentPage';
 import ReturnPayment from './pages/customer/ReturnPayment';
-import FailedPayment from './pages/customer/FailedPayment';
 import Subdivision from './pages/admin/Subdivision';
 import Building from './pages/admin/Building';
 import Apartment from './pages/admin/Apartment';
 import ApartmentList from './pages/admin/ApartmentList';
 import BuildingList from './pages/admin/BuildingList';
 import SubdivisionList from './pages/admin/SubdivisionList';
+import FailedPayment from './pages/customer/FailedPayment';
 const App = () => {
   return (
     <Routes>
@@ -39,7 +39,7 @@ const App = () => {
       <Route path='/customer/details' element={<CustomerDetails/>}/>
       <Route path='/payment' element={<PaymentPage/>}/>
       <Route path='/payment/return' element={<ReturnPayment/>}/>
-      <Route path='/payment/failed' element={<FailedPayment/>}/>
+      <Route path='payment/returnfailed' element={<FailedPayment/>}/>
 
       <Route path="/admin/tickets" element={<Tickets />} />
       <Route path="/admin/profile" element={<Profile />} />
@@ -50,9 +50,9 @@ const App = () => {
       <Route path="/admin/projects" element={<Projects />} />
       <Route path="/admin/projecttypes" element={<ProjectTypes />} />
       <Route path="/admin/dashboard" element={<Dashboard />} />
-      <Route path="/admin/subdivision" element={<Subdivision />} />
-      <Route path="/admin/building" element={<Building />} />
-      <Route path="/admin/apartment" element={<Apartment />} />
+      <Route path="/admin/subdivision/:id" element={<Subdivision />} />
+      <Route path="/admin/building/:subdivisionId" element={<Building />} />
+      <Route path="/admin/apartment/:buildingId" element={<Apartment />} />
       <Route path="/admin/apartmentlist" element={<ApartmentList/>} /> {/* CRUD Căn hộ */}
       <Route path="/admin/buildinglist" element={<BuildingList />} />   {/* CRUD Toà nhà*/}
       <Route path="/admin/subdivisionlist" element={<SubdivisionList />} />  {/* CRUD Phân khu */}

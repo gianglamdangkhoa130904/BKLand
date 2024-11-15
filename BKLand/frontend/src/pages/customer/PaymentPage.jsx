@@ -26,7 +26,7 @@ const PaymentPage = () => {
 
     const handlePayment = async () => {
     try {
-      const res = await axios.post('http://localhost:1325/vnpay/payment', {
+      const res = await axios.post('https://bkland.onrender.com/vnpay/payment', {
         amount,
         orderId
       });

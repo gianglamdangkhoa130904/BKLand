@@ -3,6 +3,7 @@ import Spinner from '../components/Spiner';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
+import { FiLock, FiLogIn, FiMail, FiPhone, FiUser, FiUserPlus } from 'react-icons/fi';
 
 const Register = () => {
     const [username, setUsername] = useState('');
@@ -44,7 +45,7 @@ const Register = () => {
         enqueueSnackbar('Mật khẩu nhập lại không trùng khớp', { variant: 'warning' });
       }
       else{
-        const responseUsername = await axios.get(`http://localhost:1325/users/username/${username}`);
+        const responseUsername = await axios.get(`https://bkland.onrender.com/users/username/${username}`);
         console.log(responseUsername);
         if(responseUsername.data == null){
           const data = {
@@ -75,72 +76,170 @@ const Register = () => {
       }
     };
     return (
-      <div className='p-4'>
-        <h1 className='text-3xl my-4 text-center'>Sign Up</h1>
-        {loading ? <Spinner /> : ''}
-        <div className='flex flex-col border-2 shadow-lg shadow-sky-500/40 rounded-xl w-[600px] p-4 mx-auto'>
-          <div className='my-4'>
-            <label className='text-xl mr-4 text-gray-500'>Name</label>
-            <input
-              type='text'
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className='border-2 shadow-lg shadow-gray-500/40 px-4 py-2  w-full '
-            />
-          </div>
-          <div className='my-4'>
-            <label className='text-xl mr-4 text-gray-500'>Email</label>
-            <input
-              type='text'
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className='border-2 shadow-lg shadow-gray-500/40 px-4 py-2  w-full '
-            />
-          </div>
-          <div className='my-4'>
-            <label className='text-xl mr-4 text-gray-500'>Phone</label>
-            <input
-              type='tel'
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              className='border-2 shadow-lg shadow-gray-500/40 px-4 py-2  w-full '
-            />
-          </div>
-          <div className='my-4'>
-            <label className='text-xl mr-4 text-gray-500'>Username</label>
-            <input
-              type='text'
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              className='border-2 shadow-lg shadow-gray-500/40 px-4 py-2 w-full'/>
-          </div>
-          <div className='my-4'>
-            <label className='text-xl mr-4 text-gray-500'>Password</label>
-            <input
-              type='password'
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className='border-2 shadow-lg shadow-gray-500/40 px-4 py-2  w-full '
-            />
-          </div>
-          <div className='my-4'>
-            <label className='text-xl mr-4 text-gray-500'>Confirm password</label>
-            <input
-              type='password'
-              value={repassword}
-              onChange={(e) => setRepassword(e.target.value)}
-              className='border-2 shadow-lg shadow-gray-500/40 px-4 py-2  w-full '
-            />
-          </div>
+      <div className="min-h-screen flex items-center justify-center bg-[#F5E6D3] bg-[url('/path/to/vintage-pattern.png')] py-12">
+      {/* Decorative Background */}
+      <div className="absolute inset-0 bg-repeat opacity-10"
+           style={{ backgroundImage: "url('/path/to/vintage-pattern.png')" }}></div>
+
+      <div className="w-full max-w-2xl px-8 relative">
+        {loading && <Spinner />}
+
+        {/* Main Container */}
+        <div className="bg-white/90 backdrop-blur-sm rounded-lg shadow-[0_0_20px_rgba(0,0,0,0.1)]
+                      border-2 border-[#8B7355] p-8 transform hover:scale-[1.01] transition-transform">
           
-          <button className='p-2 bg-sky-300 m-8 rounded-lg text-white font-semibold' onClick={handleRegister}>
-            Đăng ký
+          {/* Vintage Header */}
+          <div className="text-center mb-8">
+            <h1 className="font-serif text-4xl text-[#5C4033] mb-2 
+                         border-b-2 border-[#8B7355] pb-4">
+              Join Our Community
+            </h1>
+            <p className="text-[#8B7355] font-light italic">
+              Begin your journey with us
+            </p>
+          </div>
+
+          {/* Form Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Name Input */}
+            <div className="relative">
+              <label className="block font-serif text-[#5C4033] mb-2">Full Name</label>
+              <div className="relative">
+                <FiUser className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#8B7355]" />
+                <input
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  className="w-full pl-10 pr-4 py-3 border-2 border-[#8B7355] rounded-lg
+                           bg-[#FFF8DC]/50 focus:outline-none focus:border-[#5C4033]
+                           transition-all font-serif text-[#5C4033]"
+                  placeholder="Enter your name"
+                />
+              </div>
+            </div>
+
+            {/* Email Input */}
+            <div className="relative">
+              <label className="block font-serif text-[#5C4033] mb-2">Email</label>
+              <div className="relative">
+                <FiMail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#8B7355]" />
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full pl-10 pr-4 py-3 border-2 border-[#8B7355] rounded-lg
+                           bg-[#FFF8DC]/50 focus:outline-none focus:border-[#5C4033]
+                           transition-all font-serif text-[#5C4033]"
+                  placeholder="Enter your email"
+                />
+              </div>
+            </div>
+
+            {/* Phone Input */}
+            <div className="relative">
+              <label className="block font-serif text-[#5C4033] mb-2">Phone</label>
+              <div className="relative">
+                <FiPhone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#8B7355]" />
+                <input
+                  type="tel"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  className="w-full pl-10 pr-4 py-3 border-2 border-[#8B7355] rounded-lg
+                           bg-[#FFF8DC]/50 focus:outline-none focus:border-[#5C4033]
+                           transition-all font-serif text-[#5C4033]"
+                  placeholder="Enter your phone number"
+                />
+              </div>
+            </div>
+
+            {/* Username Input */}
+            <div className="relative">
+              <label className="block font-serif text-[#5C4033] mb-2">Username</label>
+              <div className="relative">
+                <FiUser className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#8B7355]" />
+                <input
+                  type="text"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  className="w-full pl-10 pr-4 py-3 border-2 border-[#8B7355] rounded-lg
+                           bg-[#FFF8DC]/50 focus:outline-none focus:border-[#5C4033]
+                           transition-all font-serif text-[#5C4033]"
+                  placeholder="Choose a username"
+                />
+              </div>
+            </div>
+
+            {/* Password Input */}
+            <div className="relative">
+              <label className="block font-serif text-[#5C4033] mb-2">Password</label>
+              <div className="relative">
+                <FiLock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#8B7355]" />
+                <input
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full pl-10 pr-4 py-3 border-2 border-[#8B7355] rounded-lg
+                           bg-[#FFF8DC]/50 focus:outline-none focus:border-[#5C4033]
+                           transition-all font-serif text-[#5C4033]"
+                  placeholder="Enter your password"
+                />
+              </div>
+            </div>
+
+            {/* Confirm Password Input */}
+            <div className="relative">
+              <label className="block font-serif text-[#5C4033] mb-2">Confirm Password</label>
+              <div className="relative">
+                <FiLock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#8B7355]" />
+                <input
+                  type="password"
+                  value={repassword}
+                  onChange={(e) => setRepassword(e.target.value)}
+                  className="w-full pl-10 pr-4 py-3 border-2 border-[#8B7355] rounded-lg
+                           bg-[#FFF8DC]/50 focus:outline-none focus:border-[#5C4033]
+                           transition-all font-serif text-[#5C4033]"
+                  placeholder="Confirm your password"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Register Button */}
+          <button
+            onClick={handleRegister}
+            className="w-full bg-[#8B7355] text-white py-3 rounded-lg mt-8 mb-4
+                     transform hover:bg-[#5C4033] transition-all duration-300
+                     flex items-center justify-center gap-2 font-serif"
+          >
+            <FiUserPlus className="text-xl" />
+            <span>Create Account</span>
           </button>
-          <Link to={`/login`} className='flex justify-center'>
-              <button className='rounded-md bg-sky-400 p-2 m-2 text-white font-semibold'>Login</button>
-          </Link>
+
+          {/* Login Link */}
+          <div className="text-center">
+            <p className="text-[#8B7355] mb-4 font-serif">
+              Already have an account?
+            </p>
+            <Link 
+              to="/login"
+              className="inline-flex items-center gap-2 px-6 py-2
+                       bg-[#F5E6D3] text-[#5C4033] rounded-lg
+                       hover:bg-[#8B7355] hover:text-white
+                       transition-all duration-300 font-serif"
+            >
+              <FiLogIn className="text-xl" />
+              <span>Sign In</span>
+            </Link>
+          </div>
+
+          {/* Vintage Decorative Corners */}
+          <div className="absolute -top-4 -left-4 w-8 h-8 border-t-2 border-l-2 border-[#8B7355]"></div>
+          <div className="absolute -top-4 -right-4 w-8 h-8 border-t-2 border-r-2 border-[#8B7355]"></div>
+          <div className="absolute -bottom-4 -left-4 w-8 h-8 border-b-2 border-l-2 border-[#8B7355]"></div>
+          <div className="absolute -bottom-4 -right-4 w-8 h-8 border-b-2 border-r-2 border-[#8B7355]"></div>
         </div>
       </div>
+    </div>
     );
   }
   

@@ -9,7 +9,7 @@ router.post('/payment', async (req, res) => {
     const { amount, orderId } = req.body;
     const vnp_TmnCode = 'DS93FZ5U'; // Mã TMN Code do VNPay cung cấp
     const vnp_Url = 'https://sandbox.vnpayment.vn/paymentv2/vpcpay.html'; // URL của VNPay (sử dụng sandbox cho môi trường test)
-    const vnp_ReturnUrl = 'http://localhost:1325/vnpay/returnpayment'; // URL để VNPay trả kết quả về
+    const vnp_ReturnUrl = 'https://bkland.onrender.com/vnpay/returnpayment'; // URL để VNPay trả kết quả về
   
     let vnp_Params = {};
     vnp_Params['vnp_Version'] = '2.1.0';
@@ -69,13 +69,13 @@ router.post('/payment', async (req, res) => {
                         //thanh cong
                         paymentStatus = '1'
                         // Ở đây cập nhật trạng thái giao dịch thanh toán thành công vào CSDL của bạn
-                        return res.redirect(`http://localhost:5174/payment/return?orderId=${orderId}&amount=${amount}&paymentstatus=${paymentStatus}`);
+                        return res.redirect(`https://leafy-jelly-a35759.netlify.app/payment/return?orderId=${orderId}&amount=${amount}&pay=${paymentStatus}`);
                     }
                     else {
                         //that bai
                         paymentStatus = '2'
                         // Ở đây cập nhật trạng thái giao dịch thanh toán thất bại vào CSDL của bạn
-                        return res.redirect(`http://localhost:5174/payment/return?orderId=${orderId}&amount=${amount}&paymentstatus=${paymentStatus}`);
+                        return res.redirect(`https://leafy-jelly-a35759.netlify.app/payment/returnfailed?orderId=${orderId}&amount=${amount}&pay=${paymentStatus}`);
                     }
                 }
                 else{

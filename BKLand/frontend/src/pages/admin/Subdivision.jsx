@@ -1,22 +1,29 @@
 import React, { useEffect, useState } from 'react';
 import { 
-  useColorModeValue, Box, Heading, Button, FormControl, FormLabel, Input, Modal, ModalOverlay, 
-  ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter, useDisclosure, Table, Thead, Tr, Th, Tbody, Td, IconButton, Select
+  Box, Button, Heading, Text, Table, Thead, Tr, Th, Tbody, Td, IconButton, 
+  useColorModeValue, useDisclosure, Modal, ModalFooter, ModalOverlay, 
+  ModalContent, ModalHeader, ModalCloseButton, ModalBody, FormControl, 
+  FormLabel, Input, Select, Flex, Alert, AlertIcon
 } from '@chakra-ui/react';
-import { FiEdit, FiTrash2 } from 'react-icons/fi';
+import { FiEye, FiEdit, FiTrash2, FiPlus } from 'react-icons/fi';
 import Sidebar from '../../components/Sidebar';
 import TopNav from '../../components/TopNav';
-import BreadcrumbBar from '../../components/Breadcrumbar.jsx';
+import BreadcrumbBar from '../../components/Breadcrumbar';
 import axios from 'axios';
 import { useSnackbar } from 'notistack';
+import { useNavigate, useParams } from 'react-router-dom';
 
 function Subdivision() {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const { id } = useParams();
+  const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
   const [subdivisions, setSubdivisions] = useState([]);
-  const [projects, setProjects] = useState([]);
   const [selectedSubdivision, setSelectedSubdivision] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [projectDetails, setProjectDetails] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const bg = useColorModeValue('white', 'gray.800');
+  const textColor = useColorModeValue('gray.800', 'white');
   const [form, setForm] = useState({
     subdivisionName: '',
     subdivisionDescription: '',
@@ -24,36 +31,50 @@ function Subdivision() {
     project: '',
   });
 
-  const bg = useColorModeValue('white', 'gray.800');
-  const textColor = useColorModeValue('gray.800', 'white');
-
   useEffect(() => {
-    fetchSubdivisions();
-    fetchProjects();
-  }, []);
+    if (id) {
+      fetchProjectDetailsAndSubdivisions(id);
+    }
+  }, [id]);
 
-  const fetchSubdivisions = async () => {
-    setLoading(true);
+  const fetchProjectDetailsAndSubdivisions = async (projectId) => {
+    setIsLoading(true);
     try {
-      const response = await axios.get('http://localhost:1325/subdivisions');
-      setSubdivisions(response.data.data);
+      const projectResponse = await axios.get(`http://localhost:1325/projects/${projectId}`);
+      setProjectDetails(projectResponse.data.project);
+
+      const subdivisionsResponse = await axios.get(`http://localhost:1325/subdivisions?project=${projectId}`);
+      setSubdivisions(subdivisionsResponse.data.data);
     } catch (error) {
-      enqueueSnackbar('Failed to fetch subdivisions', { variant: 'error' });
+      enqueueSnackbar('Không thể lấy dữ liệu: ' + (error.response?.data?.message || error.message), { variant: 'error' });
+      console.error('Failed to fetch data', error);
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
-  const fetchProjects = async () => {
-    try {
-      const response = await axios.get('http://localhost:1325/projects');
-      setProjects(response.data.data);
-    } catch (error) {
-      enqueueSnackbar('Failed to fetch projects', { variant: 'error' });
-    }
+  const handleViewSubdivisionDetails = (subdivisionId) => {
+    navigate(`/admin/building/${subdivisionId}`);
+  };
+
+  const handleAddNew = () => {
+    setSelectedSubdivision(null);
+    setForm({
+      subdivisionName: '',
+      subdivisionDescription: '',
+      subdivisionStatus: 'Active',
+      project: id,
+    });
+    onOpen();
   };
 
   const handleAddOrEdit = () => {
+    // Validation
+    if (!form.subdivisionName.trim()) {
+      enqueueSnackbar('Tên phân khu không được để trống', { variant: 'error' });
+      return;
+    }
+
     if (selectedSubdivision) {
       handleUpdateSubdivision();
     } else {
@@ -62,36 +83,60 @@ function Subdivision() {
   };
 
   const handleCreateSubdivision = async () => {
+    setIsLoading(true);
     try {
-      await axios.post('http://localhost:1325/subdivisions', form);
-      enqueueSnackbar('Subdivision added successfully', { variant: 'success' });
-      fetchSubdivisions();
-    } catch (error) {
-      enqueueSnackbar('Failed to add subdivision', { variant: 'error' });
-    } finally {
+      await axios.post('http://localhost:1325/subdivisions', {
+        ...form,
+        project: id
+      });
+      enqueueSnackbar('Tạo phân khu mới thành công', { variant: 'success' });
+      await fetchProjectDetailsAndSubdivisions(id);
       onClose();
+      setForm({
+        subdivisionName: '',
+        subdivisionDescription: '',
+        subdivisionStatus: 'Active',
+        project: '',
+      });
+    } catch (error) {
+      enqueueSnackbar('Không thể tạo phân khu mới: ' + (error.response?.data?.message || error.message), { variant: 'error' });
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const handleUpdateSubdivision = async () => {
+    setIsLoading(true);
     try {
-      await axios.put(`http://localhost:1325/subdivisions/${selectedSubdivision._id}`, form);
-      enqueueSnackbar('Subdivision updated successfully', { variant: 'success' });
-      fetchSubdivisions(); 
-    } catch (error) {
-      enqueueSnackbar('Failed to update subdivision', { variant: 'error' });
-    } finally {
+      await axios.put(`http://localhost:1325/subdivisions/${selectedSubdivision._id}`, {
+        ...form,
+        project: id
+      });
+      enqueueSnackbar('Cập nhật phân khu thành công', { variant: 'success' });
+      await fetchProjectDetailsAndSubdivisions(id);
+      setSelectedSubdivision(null);
       onClose();
+    } catch (error) {
+      enqueueSnackbar('Không thể cập nhật phân khu: ' + (error.response?.data?.message || error.message), { variant: 'error' });
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const handleDeleteSubdivision = async (id) => {
+  const handleDeleteSubdivision = async (subdivisionId) => {
+    if (!window.confirm('Bạn có chắc chắn muốn xóa phân khu này?')) {
+      return;
+    }
+
+    setIsLoading(true);
     try {
-      await axios.delete(`http://localhost:1325/subdivisions/${id}`);
-      enqueueSnackbar('Subdivision deleted successfully', { variant: 'success' });
-      fetchSubdivisions();
+      await axios.delete(`http://localhost:1325/subdivisions/${subdivisionId}`);
+      enqueueSnackbar('Xóa phân khu thành công', { variant: 'success' });
+      await fetchProjectDetailsAndSubdivisions(id);
     } catch (error) {
-      enqueueSnackbar('Failed to delete subdivision', { variant: 'error' });
+      enqueueSnackbar('Không thể xóa phân khu: ' + (error.response?.data?.message || error.message), { variant: 'error' });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -101,18 +146,7 @@ function Subdivision() {
       subdivisionName: subdivision.subdivisionName,
       subdivisionDescription: subdivision.subdivisionDescription,
       subdivisionStatus: subdivision.subdivisionStatus,
-      project: subdivision.project?._id || '',
-    });
-    onOpen();
-  };
-
-  const openAddModal = () => {
-    setSelectedSubdivision(null);
-    setForm({
-      subdivisionName: '',
-      subdivisionDescription: '',
-      subdivisionStatus: 'Active',
-      project: '',
+      project: id,
     });
     onOpen();
   };
@@ -129,102 +163,123 @@ function Subdivision() {
         <TopNav />
         <BreadcrumbBar />
         <Box flex="1" p={4} width="100%">
-          <Heading mb={4}>Subdivisions</Heading>
-          <Button colorScheme="blue" onClick={openAddModal} mb={4}>
-            THÊM PHÂN KHU
-          </Button>
-          <Table variant="simple" width="100%">
-            <Thead>
-              <Tr>
-                <Th width="5%">STT</Th>
-                <Th width="20%">Subdivision Name</Th>
-                <Th width="25%">Description</Th>
-                <Th width="20%">Project</Th>
-                <Th width="15%">Status</Th>
-                <Th width="15%" textAlign="right">Actions</Th>
-              </Tr>
-            </Thead>
-            <Tbody>
-              {subdivisions.map((subdivision, index) => (
-                <Tr key={subdivision._id}>
-                  <Td width="5%">{index + 1}</Td>
-                  <Td width="20%">{subdivision.subdivisionName}</Td>
-                  <Td width="25%">{subdivision.subdivisionDescription}</Td>
-                  <Td width="20%">{subdivision.project?.projectName || 'No project'}</Td>
-                  <Td width="15%">{subdivision.subdivisionStatus}</Td>
-                  <Td width="15%" textAlign="right">
-                    <IconButton
-                      icon={<FiEdit />}
-                      aria-label="Edit"
-                      mr={2}
-                      onClick={() => openEditModal(subdivision)}
-                    />
-                    <IconButton
-                      icon={<FiTrash2 />}
-                      aria-label="Delete"
-                      colorScheme="red"
-                      onClick={() => handleDeleteSubdivision(subdivision._id)}
-                    />
-                  </Td>
-                </Tr>
-              ))}
-            </Tbody>
-          </Table>
+          <Flex justify="space-between" align="center" mb={4}>
+            <Heading>Thông tin chi tiết dự án</Heading>
+            <Button
+              leftIcon={<FiPlus />}
+              colorScheme="blue"
+              onClick={handleAddNew}
+              isLoading={isLoading}
+            >
+              Thêm phân khu mới
+            </Button>
+          </Flex>
 
-          {/* Modal for Adding/Editing Subdivision */}
-          <Modal isOpen={isOpen} onClose={onClose}>
+          {projectDetails && (
+            <Box mb={8} p={4} borderWidth="1px" borderRadius="md" bg="white" shadow="sm">
+              <Heading size="md" mb={4}>Thông tin dự án</Heading>
+              <Text><strong>Tên: </strong> {projectDetails.projectName}</Text>
+              <Text><strong>Mô tả:</strong> {projectDetails.projectDescription}</Text>
+              <Text><strong>Tỉnh thành:</strong> {projectDetails.province?.provinceName}</Text>
+              <Text><strong>Loại:</strong> {projectDetails.projectType?.projectTypeName}</Text>
+              <Text><strong>Trạng thái:</strong> {projectDetails.projectStatus || 'Active'}</Text>
+            </Box>
+          )}
+
+          <Box mb={4}>
+            <Heading size="md" mb={4}>Các phân khu thuộc về dự án</Heading>
+            {subdivisions.length === 0 && !isLoading && (
+              <Alert status="info" mb={4}>
+                <AlertIcon />
+                Chưa có phân khu nào trong dự án này
+              </Alert>
+            )}
+            <Table variant="simple" width="100%" bg="white" shadow="sm">
+              <Thead>
+                <Tr>
+                  <Th width="5%">STT</Th>
+                  <Th width="25%">Tên phân khu</Th>
+                  <Th width="25%">Dự án</Th>
+                  <Th width="15%">Trạng thái</Th>
+                  <Th width="10%">Actions</Th>
+                </Tr>
+              </Thead>
+              <Tbody>
+                {subdivisions.map((subdivision, index) => (
+                  <Tr key={subdivision._id}>
+                    <Td>{index + 1}</Td>
+                    <Td>{subdivision.subdivisionName}</Td>
+                    <Td>{projectDetails?.projectName}</Td>
+                    <Td>{subdivision.subdivisionStatus}</Td>
+                    <Td className='flex'>
+                      <IconButton
+                        icon={<FiEye />}
+                        aria-label="View Subdivision Details"
+                        onClick={() => handleViewSubdivisionDetails(subdivision._id)}
+                        mr={2}
+                      />
+                      <IconButton
+                        icon={<FiEdit />}
+                        aria-label="Edit"
+                        mr={2}
+                        onClick={() => openEditModal(subdivision)}
+                      />
+                      <IconButton
+                        icon={<FiTrash2 />}
+                        aria-label="Delete"
+                        colorScheme="red"
+                        onClick={() => handleDeleteSubdivision(subdivision._id)}
+                        isLoading={isLoading}
+                      />
+                    </Td>
+                  </Tr>
+                ))}
+              </Tbody>
+            </Table>
+          </Box>
+
+          <Modal isOpen={isOpen} onClose={onClose} size="md">
             <ModalOverlay />
             <ModalContent>
-              <ModalHeader>{selectedSubdivision ? 'Edit Subdivision' : 'Add New Subdivision'}</ModalHeader>
+              <ModalHeader>{selectedSubdivision ? 'Chỉnh sửa phân khu' : 'Thêm phân khu mới'}</ModalHeader>
               <ModalCloseButton />
               <ModalBody>
-                <FormControl mb={4}>
-                  <FormLabel>Subdivision Name</FormLabel>
+                <FormControl mb={4} isRequired>
+                  <FormLabel>Tên phân khu</FormLabel>
                   <Input
                     name="subdivisionName"
                     value={form.subdivisionName}
                     onChange={handleChange}
+                    placeholder="Nhập tên phân khu..."
                   />
                 </FormControl>
                 <FormControl mb={4}>
-                  <FormLabel>Subdivision Description</FormLabel>
+                  <FormLabel>Mô tả</FormLabel>
                   <Input
                     name="subdivisionDescription"
                     value={form.subdivisionDescription}
                     onChange={handleChange}
+                    placeholder="Nhập mô tả..."
                   />
                 </FormControl>
                 <FormControl mb={4}>
-                <FormLabel>Status</FormLabel>
-                <Input
-                  name="subdivisionStatus"
-                  value={form.subdivisionStatus}
-                  onChange={handleChange}
-                  placeholder="e.g., Active"
-                  isReadOnly={!!selectedSubdivision} // Chỉ cho phép xem khi đang chỉnh sửa
-                />
-              </FormControl>
-                <FormControl mb={4}>
-                  <FormLabel>Project</FormLabel>
+                  <FormLabel>Trạng thái</FormLabel>
                   <Select
-                    name="project"
-                    value={form.project}
+                    name="subdivisionStatus"
+                    value={form.subdivisionStatus}
                     onChange={handleChange}
                   >
-                    <option value="">Select Project</option>
-                    {projects.map((project) => (
-                      <option key={project._id} value={project._id}>
-                        {project.projectName}
-                      </option>
-                    ))}
+                    <option value="Active">Active</option>
+                    <option value="Inactive">Inactive</option>
+                    <option value="Maintenance">Maintenance</option>
                   </Select>
                 </FormControl>
               </ModalBody>
               <ModalFooter>
-                <Button colorScheme="blue" mr={3} onClick={handleAddOrEdit}>
-                  {selectedSubdivision ? 'Update' : 'Add'}
+                <Button colorScheme="blue" mr={3} onClick={handleAddOrEdit} isLoading={isLoading}>
+                  {selectedSubdivision ? 'Cập nhật' : 'Thêm mới'}
                 </Button>
-                <Button onClick={onClose}>Cancel</Button>
+                <Button onClick={onClose}>Huỷ</Button>
               </ModalFooter>
             </ModalContent>
           </Modal>

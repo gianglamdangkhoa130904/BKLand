@@ -3,14 +3,16 @@ import {
   useColorMode, useColorModeValue, Box, Heading, Button, FormControl, FormLabel, Input, Modal, ModalOverlay, 
   ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter, useDisclosure, Table, Thead, Tr, Th, Tbody, Td, IconButton, Select
 } from '@chakra-ui/react';
-import { FiEdit, FiTrash2 } from 'react-icons/fi';
+import { FiEdit, FiTrash2, FiEye } from 'react-icons/fi';
 import Sidebar from '../../components/Sidebar';
 import TopNav from '../../components/TopNav';
 import BreadcrumbBar from '../../components/Breadcrumbar';
 import axios from 'axios';
 import { useSnackbar } from 'notistack';
+import { useNavigate } from 'react-router-dom';
 
 function Projects() {
+  const navigate = useNavigate();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { enqueueSnackbar } = useSnackbar();
   const [projects, setProjects] = useState([]);
@@ -136,7 +138,9 @@ function Projects() {
     const { name, value } = e.target;
     setForm({ ...form, [name]: value });
   };
-
+  const handleViewProjectDetails = (projectId) => {
+    navigate(`/admin/subdivision/${projectId}/`);
+  }
   return (
     <Box minH="100vh" display="flex" bg={bg} color={textColor}>
       <Sidebar />
@@ -170,6 +174,12 @@ function Projects() {
                   <Td width="15%">{project.projectType?.projectTypeName}</Td>
                   <Td width="10%">{project.projectStatus}</Td>
                   <Td width="20%" textAlign="right">
+                    <IconButton
+                        icon={<FiEye />}
+                        aria-label="View Project Details"
+                        onClick={() => handleViewProjectDetails(project._id)}
+                        mr={2}
+                      />
                     <IconButton
                       icon={<FiEdit />}
                       aria-label="Edit"

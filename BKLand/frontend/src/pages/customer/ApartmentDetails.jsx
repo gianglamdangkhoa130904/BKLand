@@ -1,146 +1,260 @@
-import React, { useEffect, useState } from 'react'
-import { useLocation } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import TopNavCustomer from '../../components/TopNavCustomer';
-import CanHo from '../../assets/apartment_1.jpeg'
-import {
-    Box,
-    Text,
-    Button,
-    HStack, VStack, StackDivider,
-    Image,
-    AbsoluteCenter,
-    Flex,
-    Menu, MenuButton, MenuList, MenuItem,
-    Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton,
-    Container,
-    useDisclosure,
-    Input,
-    Tabs, TabList, TabPanels, Tab, TabPanel, TabIndicator
-  } from '@chakra-ui/react';
+import CanHo from '../../assets/apartment_1.jpeg';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+
 const ApartmentDetails = () => {
     const navigate = useNavigate();
     const location = useLocation();
+    const [error, setError] = useState(null);
+    const [loading, setLoading] = useState(true);
     const [apartment, setApartment] = useState('');
     const [building, setBuilding] = useState('');
     const [subdivision, setSubdivision] = useState('');
     const [project, setProject] = useState('');
+    const [activeTab, setActiveTab] = useState(0);
+    const [showPrice, setShowPrice] = useState(false);
+
+    // Giữ nguyên logic fetchData
     const fetchData = async () => {
-        const dataApartment = location.state;
+        try {
+            setLoading(true);
+            const dataApartment = location.state;
         setApartment(dataApartment);
-        const responceBuilding = await axios.get(`http://localhost:1325/buildings/${dataApartment.buildingID._id}`);
-        setBuilding(responceBuilding.data.data);
-        // console.log(responceBuilding.data.data);
-        const responceSubdivision = await axios.get(`http://localhost:1325/subdivisions/${responceBuilding.data.data.subdivision}`);
-        setSubdivision(responceSubdivision.data.data);
-        // console.log(responceSubdivision.data.data);
-        const responceProject = await axios.get(`http://localhost:1325/projects/${responceSubdivision.data.data.project}`);
-        setProject(responceProject.data.data);
-        // console.log(responceProject.data.data);
-    }
-    const handleBuy = () => {
-        const data =  {apartment: apartment, 
-            building: building.buildingName, 
+        const responceBuilding = await axios.get(`https://bkland.onrender.com/buildings/${dataApartment.buildingID?._id}`);
+        setBuilding(responceBuilding.data);
+        // console.log(responceSubdivision.data);
+        const responceSubdivision = await axios.get(`https://bkland.onrender.com/subdivisions/${responceBuilding.data.subdivision?._id}`);
+        setSubdivision(responceSubdivision.data);
+        // console.log(responceSubdivision.data);
+        const responceProject = await axios.get(`https://bkland.onrender.com/projects/${responceSubdivision.data.project?._id}`);
+        setProject(responceProject.data.project);
+        // console.log(responceProject.data.project);
+
+        } catch (error) {
+            console.error("Full Error Details:", error);
+            let errorMessage = 'An error occurred while fetching data';
+            if (error.response?.status === 500) {
+                errorMessage = 'Server error. Please try again later.';
+            } else if (error.response?.status === 404) {
+                errorMessage = 'Data not found. Please check the information.';
+            } else if (error.message) {
+                errorMessage = error.message;
+            }
+            setError(errorMessage);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // Giữ nguyên logic handleBuy_Apartment
+    const handleBuy_Apartment = () => {
+        const data = {
+            apartment: apartment,
+            building: building.buildingName,
             subdivision: subdivision.subdivisionName,
-            project: project.projectName};
+            project: project.projectName
+        };
         navigate('/customer/details', { state: data });
-    }
+    };
+
     useEffect(() => {
         fetchData();
-    }, [])
-  return (
-    <>
-        <TopNavCustomer/>
-        <Container maxW="5xl" h="auto" mt="100px" p="0">
-            <HStack h="350px" w="100%">
-                <Box w="50%" m="0" h="100%"><Image w="100%" h="100%" objectFit='cover' src={CanHo} borderRadius="md"></Image></Box>
-                <VStack w="25%" h="100%">
-                    <Box h="50%" ><Image w="100%" h="100%" objectFit='cover' src={CanHo} borderRadius="md"></Image></Box>
-                    <Box h="50%" ><Image w="100%" h="100%" objectFit='cover' src={CanHo} borderRadius="md"></Image></Box>
-                </VStack>
-                <VStack w="25%" h="100%">
-                    <Box h="50%"><Image w="100%" h="100%" objectFit='cover' src={CanHo} borderRadius="md"></Image></Box>
-                    <Box h="50%"><Image w="100%" h="100%" objectFit='cover' src={CanHo} borderRadius="md"></Image></Box>
-                </VStack>
-            </HStack>
-            <HStack mt="40px" bg="white" h="500px" boxShadow="2xl" borderRadius="md" mb='150px'>
-                <Tabs w="100%" alignSelf="start" align='center' isFitted variant='unstyled' mt="5px">
-                    <TabList>
-                        <Tab fontWeight="bold" fontSize="large">Thông tin dự án</Tab>
-                        <Tab fontWeight="bold" fontSize="large">Phân khu</Tab>
-                        <Tab fontWeight="bold" fontSize="large">Tòa</Tab>
-                        <Tab fontWeight="bold" fontSize="large">Tổng quan căn hộ</Tab>
-                    </TabList>
-                    <TabIndicator mt='-1.5px' height='2px' bg='blue.500' borderRadius='1px'/>
-                    <TabPanels>
-                        <TabPanel>
-                            <VStack align="start" fontSize="large">
-                                <Box>
-                                    Dự án: {project.projectName}
-                                </Box>
-                                <Box>
-                                    Mô tả dự án: {project.projectDescription}
-                                </Box>
-                            </VStack>
-                        </TabPanel>
-                        <TabPanel>
-                            <VStack align="start" fontSize="large">
-                                <Box>
-                                    Phân khu: {subdivision.subdivisionName}
-                                </Box>
-                                <Box>
-                                    Mô tả phân khu: {subdivision.subdivisionDescription}
-                                </Box>
-                            </VStack>
-                        </TabPanel>
-                        <TabPanel>
-                            <VStack align="start" fontSize="large">
-                                <Box>
-                                    Tòa: {building.buildingName}
-                                </Box>
-                                <Box>
-                                    Mô tả tòa: {building.buildingDescription}
-                                </Box>
-                            </VStack>
-                        </TabPanel>
-                        <TabPanel>
-                            <VStack align="start" fontSize="large">
-                                <Box>
-                                    Số lượng phòng ngủ: {apartment.numberOfBedroom}
-                                </Box>
-                                <Box>
-                                    Số lượng nhà vệ sinh: {apartment.numberOfToilet}
-                                </Box>
-                                <Box>
-                                    Hướng: {apartment.direction}
-                                </Box>
-                                <Box>
-                                    Tầng: {apartment.floor}
-                                </Box>
-                            </VStack>
-                        </TabPanel>
-                    </TabPanels>
-                </Tabs>
-            </HStack>
-        </Container>
-        <Flex pos="fixed" 
-        w="100%" h="100px" 
-        bottom="20px" maxW="2000px" 
-        justifyContent="center" alignItems="center">
-            <VStack w="30%" h="auto" bg="white" borderRadius="md" p="2" boxShadow="dark-lg">
-                <HStack w="100%" fontWeight="bold">
-                    <Text w="50%">Giá niêm yết</Text>
-                    <Text w="50%" textAlign="end">{apartment.sellingPrice} vnđ</Text>
-                </HStack>
-                <Text alignSelf="start" fontSize="small">Đã bao gồm VAT & KPBT</Text>
-                <Button bg="blue.900" textColor="white" w="100%" h="50px" onClick={handleBuy}>
-                    Đặt cọc 50.000.000 vnđ
-                </Button>
-            </VStack>
-        </Flex>
-    </>
-  )
-}
+    }, []);
 
-export default ApartmentDetails
+    // Component Loading/Error với style vintage
+    const TabContent = ({ isLoading, error, children }) => {
+        if (isLoading) {
+            return (
+                <div className="animate-pulse space-y-4">
+                    <div className="h-5 bg-amber-100 rounded w-3/5"></div>
+                    <div className="h-24 bg-amber-100 rounded w-full"></div>
+                </div>
+            );
+        }
+
+        if (error) {
+            return (
+                <div className="text-red-800 p-4 bg-red-50 rounded-lg border-2 border-red-200">
+                    <span className="mr-2">⚠️</span>
+                    {error}
+                </div>
+            );
+        }
+
+        return children;
+    };
+
+    return (
+        <div className="bg-amber-50 min-h-screen relative">
+            <TopNavCustomer />
+            
+            <div className="max-w-6xl mx-auto pt-28 px-4">
+                {/* Gallery với style vintage */}
+                <div className="grid grid-cols-4 gap-4">
+                    <div className="col-span-2 h-96">
+                        <div className="w-full h-full relative border-4 border-amber-900 rounded-lg overflow-hidden shadow-xl">
+                            <img src={CanHo} alt="Main" className="w-full h-full object-cover" />
+                        </div>
+                    </div>
+                    <div className="space-y-4">
+                        <div className="h-[47%] border-4 border-amber-900 rounded-lg overflow-hidden shadow-lg">
+                            <img src={CanHo} alt="Side 1" className="w-full h-full object-cover" />
+                        </div>
+                        <div className="h-[47%] border-4 border-amber-900 rounded-lg overflow-hidden shadow-lg">
+                            <img src={CanHo} alt="Side 2" className="w-full h-full object-cover" />
+                        </div>
+                    </div>
+                    <div className="space-y-4">
+                        <div className="h-[47%] border-4 border-amber-900 rounded-lg overflow-hidden shadow-lg">
+                            <img src={CanHo} alt="Side 3" className="w-full h-full object-cover" />
+                        </div>
+                        <div className="h-[47%] border-4 border-amber-900 rounded-lg overflow-hidden shadow-lg">
+                            <img src={CanHo} alt="Side 4" className="w-full h-full object-cover" />
+                        </div>
+                    </div>
+                </div>
+
+                {/* Main Content với style vintage */}
+                <div className="mt-10 bg-white rounded-lg shadow-xl border-4 border-double border-amber-900 p-8 mb-32">
+                    {/* Tabs */}
+                    <div className="border-b-2 border-amber-200">
+                        <div className="flex justify-center space-x-8">
+                            {['Thông tin dự án', 'Phân khu', 'Tòa', 'Tổng quan căn hộ'].map((tab, index) => (
+                                <button
+                                    key={index}
+                                    onClick={() => setActiveTab(index)}
+                                    className={`pb-2 px-4 font-serif text-lg relative
+                                        ${activeTab === index 
+                                            ? 'text-amber-900 border-b-2 border-amber-900' 
+                                            : 'text-amber-600 hover:text-amber-800'}`}
+                                >
+                                    {tab}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* Tab Content với style vintage */}
+                    <div className="mt-8 font-serif p-6 bg-amber-50 rounded-lg border-2 border-amber-200">
+                        {activeTab === 0 && (
+                            <TabContent isLoading={loading} error={error}>
+                                <div className="space-y-4">
+                                    <div className="flex border-b border-amber-200 pb-2">
+                                        <span className="text-lg font-semibold text-amber-900 w-32">Dự án:</span>
+                                        <span className="text-lg">{project?.projectName || 'Đang tải...'}</span>
+                                    </div>
+                                    <div className="flex border-b border-amber-200 pb-2">
+                                        <span className="text-lg font-semibold text-amber-900 w-32">Mô tả:</span>
+                                        <span className="text-lg">{project?.projectDescription || 'Đang tải...'}</span>
+                                    </div>
+                                </div>
+                            </TabContent>
+                        )}
+                        {activeTab === 1 && (
+                            <TabContent isLoading={loading} error={error}>
+                                <div className="space-y-4">
+                                    <div className="flex border-b border-amber-200 pb-2">
+                                        <span className="text-lg font-semibold text-amber-900 w-32">Phân khu:</span>
+                                        <span className="text-lg">{subdivision?.subdivisionName || 'Đang tải...'}</span>
+                                    </div>
+                                    <div className="flex border-b border-amber-200 pb-2">
+                                        <span className="text-lg font-semibold text-amber-900 w-32">Mô tả:</span>
+                                        <span className="text-lg">{subdivision?.subdivisionDescription || 'Đang tải...'}</span>
+                                    </div>
+                                </div>
+                            </TabContent>
+                        )}
+                        {activeTab === 2 && (
+                            <TabContent isLoading={loading} error={error}>
+                                <div className="space-y-4">
+                                    <div className="flex border-b border-amber-200 pb-2">
+                                        <span className="text-lg font-semibold text-amber-900 w-32">Tòa:</span>
+                                        <span className="text-lg">{building?.buildingName || 'Đang tải...'}</span>
+                                    </div>
+                                    <div className="flex border-b border-amber-200 pb-2">
+                                        <span className="text-lg font-semibold text-amber-900 w-32">Mô tả:</span>
+                                        <span className="text-lg">{building?.buildingDescription || 'Đang tải...'}</span>
+                                    </div>
+                                </div>
+                            </TabContent>
+                        )}
+                        {activeTab === 3 && (
+                            <div className="grid grid-cols-2 gap-6">
+                                <div className="flex border-b border-amber-200 pb-2">
+                                    <span className="text-lg font-semibold text-amber-900">Phòng ngủ:</span>
+                                    <span className="text-lg ml-2">{apartment.numberOfBedroom}</span>
+                                </div>
+                                <div className="flex border-b border-amber-200 pb-2">
+                                    <span className="text-lg font-semibold text-amber-900">Phòng tắm:</span>
+                                    <span className="text-lg ml-2">{apartment.numberOfToilet}</span>
+                                </div>
+                                <div className="flex border-b border-amber-200 pb-2">
+                                    <span className="text-lg font-semibold text-amber-900">Hướng:</span>
+                                    <span className="text-lg ml-2">{apartment.direction}</span>
+                                </div>
+                                <div className="flex border-b border-amber-200 pb-2">
+                                    <span className="text-lg font-semibold text-amber-900">Tầng:</span>
+                                    <span className="text-lg ml-2">{apartment.floor}</span>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            </div>
+
+            {/* Price Bar với animation và style vintage */}
+            <div 
+                className={`fixed bottom-0 left-0 right-0 transition-all duration-500 ease-in-out transform
+                        ${showPrice ? 'translate-y-0 opacity-100' : 'translate-y-full opacity-0'}`}
+                style={{ zIndex: 50 }}  // Thêm z-index để đảm bảo nằm trên hover zone
+            >
+                <div className="max-w-xl mx-auto mb-4">
+                    <div className="bg-white rounded-lg p-4 border-2 border-amber-900 shadow-lg mx-4 relative overflow-hidden">
+                        {/* Decorative Corner Elements */}
+                        <div className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-amber-900"></div>
+                        <div className="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-amber-900"></div>
+                        <div className="absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 border-amber-900"></div>
+                        <div className="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-amber-900"></div>
+
+                        {/* Price Content */}
+                        <div className="space-y-3">
+                            <div className="flex justify-between items-center">
+                                <span className="text-lg font-serif text-amber-900">Giá niêm yết</span>
+                                <span className="text-xl font-bold text-amber-900">
+                                    {apartment.sellingPrice} vnđ
+                                </span>
+                            </div>
+                            
+                            <div className="text-sm text-amber-700 italic">
+                                Đã bao gồm VAT & KPBT
+                            </div>
+                            
+                            <button
+                                onClick={handleBuy_Apartment}
+                                className="w-full py-3 text-white rounded-md font-serif
+                                        transition-all duration-300 hover:shadow-lg
+                                        transform hover:-translate-y-0.5 cursor-pointer
+                                        bg-amber-900 hover:bg-amber-800
+                                        border border-amber-950"
+                            >
+                                Đặt cọc 50.000.000 vnđ
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Hover Detection Zone */}
+            <div 
+                className="fixed bottom-0 left-0 right-0 h-20 bg-transparent"
+                onMouseEnter={() => setShowPrice(true)}
+                onMouseLeave={() => setShowPrice(false)}
+                style={{ zIndex: 40 }}  // Đặt z-index thấp hơn price bar
+            />
+        </div>
+    );
+};
+
+export default ApartmentDetails;

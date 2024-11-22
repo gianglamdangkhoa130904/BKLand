@@ -69,13 +69,24 @@ router.post('/payment', async (req, res) => {
                         //thanh cong
                         paymentStatus = '1'
                         // Ở đây cập nhật trạng thái giao dịch thanh toán thành công vào CSDL của bạn
-                        return res.redirect(`https://leafy-jelly-a35759.netlify.app/payment/return?orderId=${orderId}&amount=${amount}&pay=${paymentStatus}`);
+                        return res.status(200).json({
+                            status: "success",
+                            message: "Thanh toán thành công",
+                            orderId,
+                            amount,
+                        });
                     }
                     else {
                         //that bai
                         paymentStatus = '2'
                         // Ở đây cập nhật trạng thái giao dịch thanh toán thất bại vào CSDL của bạn
-                        return res.redirect(`https://leafy-jelly-a35759.netlify.app/payment/returnfailed?orderId=${orderId}&amount=${amount}&pay=${paymentStatus}`);
+                        return res.status(200).json({
+                            status: "failed",
+                            message: "Thanh toán thất bại",
+                            orderId,
+                            amount,
+                            responseCode,
+                        });
                     }
                 }
                 else{

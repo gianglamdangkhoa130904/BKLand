@@ -9,15 +9,15 @@ const ReturnPayment = () => {
 
   const orderId = queryParams.get('orderId');
   const amount = queryParams.get('amount');
-  const paymentStatus = queryParams.get('pay');
+  const paymentStatus = queryParams.get('status');
 
-  const order = orderId.substring(9);
-  const apartmentID = order.split('/')[0];
-  const customerID = order.split('/')[1];
+  // const order = orderId.substring(9);
+  // const apartmentID = order.split('/')[0];
+  // const customerID = order.split('/')[1];
   const fetchData = async () => {
-    const apartment = await axios.get(`https://bkland.onrender.com/apartments/${Cookie.get('apartment')}`);
+    const apartment = await axios.get(`http://localhost:1324/apartments/${Cookie.get('apartment')}`);
     console.log(apartment.data.data);
-    const customer = await axios.get(`https://bkland.onrender.com/users/${Cookie.get('customer')}`);
+    const customer = await axios.get(`http://localhost:1324/users/${Cookie.get('customer')}`);
     console.log(customer.data);
     console.log(Cookie.get('statusPay'));
     console.log(Cookie.get('apartment'));
@@ -30,7 +30,10 @@ const ReturnPayment = () => {
 
   }
   useEffect(() => {
-    fetchData();
+    console.log(orderId);
+    console.log(amount);
+    console.log(paymentStatus);
+    // fetchData();
   }, [])
   return (
     <>

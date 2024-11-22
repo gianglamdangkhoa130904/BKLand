@@ -45,7 +45,7 @@ function ProjectsList() {
   const fetchProjects = async () => {
     setLoading(true);
     try {
-      const response = await axios.get('http://localhost:1325/projects');
+      const response = await axios.get('http://localhost:1324/projects');
       setProjects(response.data.data);
     } catch (error) {
       enqueueSnackbar('Failed to fetch projects', { variant: 'error' });
@@ -56,7 +56,7 @@ function ProjectsList() {
 
   const fetchProvinces = async () => {
     try {
-      const response = await axios.get('http://localhost:1325/provinces');
+      const response = await axios.get('http://localhost:1324/provinces');
       setProvinces(response.data.data);
     } catch (error) {
       enqueueSnackbar('Failed to fetch provinces', { variant: 'error' });
@@ -65,7 +65,7 @@ function ProjectsList() {
 
   const fetchProjectTypes = async () => {
     try {
-      const response = await axios.get('http://localhost:1325/projectTypes');
+      const response = await axios.get('http://localhost:1324/projectTypes');
       setProjectTypes(response.data.data);
     } catch (error) {
       enqueueSnackbar('Failed to fetch project types', { variant: 'error' });
@@ -83,7 +83,7 @@ function ProjectsList() {
     }
 
     try {
-      await axios.post('http://localhost:1325/projects', formData, {
+      await axios.post('http://localhost:1324/projects', formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
@@ -108,7 +108,7 @@ function ProjectsList() {
     }
 
     try {
-      await axios.put(`http://localhost:1325/projects/${editingProjectId}`, formData, {
+      await axios.put(`http://localhost:1324/projects/${editingProjectId}`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
@@ -140,7 +140,7 @@ function ProjectsList() {
 
   const handleDeleteProject = async () => {
     try {
-      await axios.delete(`http://localhost:1325/projects/${deleteProjectId}`);
+      await axios.delete(`http://localhost:1324/projects/${deleteProjectId}`);
       enqueueSnackbar('Project deleted successfully', { variant: 'success' });
       fetchProjects();
     } catch (error) {

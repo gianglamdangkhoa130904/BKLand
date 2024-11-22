@@ -38,7 +38,7 @@ function Employees() {
   const fetchEmployees = async () => {
     setLoading(true);
     try {
-      const response = await axios.get('http://localhost:1325/employees');
+      const response = await axios.get('http://localhost:1324/employees');
       setEmployees(response.data);
     } catch (error) {
       enqueueSnackbar('Failed to fetch employees', { variant: 'error' });
@@ -57,7 +57,7 @@ function Employees() {
 
   const handleCreateEmployee = async () => {
     try {
-      await axios.post(`http://localhost:1325/employees`, form);
+      await axios.post(`http://localhost:1324/employees`, form);
       enqueueSnackbar('Employee added successfully', { variant: 'success' });
       fetchEmployees();
     } catch (error) {
@@ -69,7 +69,7 @@ function Employees() {
   
   const handleUpdateEmployee = async () => {
     try {
-      await axios.put(`http://localhost:1325/employees/${selectedEmployee._id}`, form);
+      await axios.put(`http://localhost:1324/employees/${selectedEmployee._id}`, form);
       enqueueSnackbar('Employee updated successfully', { variant: 'success' });
       fetchEmployees(); 
     } catch (error) {
@@ -81,7 +81,7 @@ function Employees() {
   
   const handleDeleteEmployee = async (id) => {
     try {
-      await axios.delete(`http://localhost:1325/employees/${id}`);
+      await axios.delete(`http://localhost:1324/employees/${id}`);
       enqueueSnackbar('Employee deleted successfully', { variant: 'success' });
       fetchEmployees();
     } catch (error) {

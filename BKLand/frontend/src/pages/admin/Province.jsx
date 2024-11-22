@@ -31,7 +31,7 @@ function Province() {
   const fetchProvinces = async () => {
     setLoading(true);
     try {
-      const response = await axios.get('http://localhost:1325/provinces');
+      const response = await axios.get('http://localhost:1324/provinces');
       setProvinces(response.data.data);
     } catch (error) {
       enqueueSnackbar('Failed to fetch provinces', { variant: 'error' });
@@ -50,7 +50,7 @@ function Province() {
 
   const handleCreateProvince = async () => {
     try {
-      await axios.post('http://localhost:1325/provinces', form);
+      await axios.post('http://localhost:1324/provinces', form);
       enqueueSnackbar('Province added successfully', { variant: 'success' });
       fetchProvinces();
     } catch (error) {
@@ -62,7 +62,7 @@ function Province() {
 
   const handleUpdateProvince = async () => {
     try {
-      await axios.put(`http://localhost:1325/provinces/${selectedProvince._id}`, form);
+      await axios.put(`http://localhost:1324/provinces/${selectedProvince._id}`, form);
       enqueueSnackbar('Province updated successfully', { variant: 'success' });
       fetchProvinces();
     } catch (error) {
@@ -74,7 +74,7 @@ function Province() {
 
   const handleDeleteProvince = async (id) => {
     try {
-        await axios.delete(`http://localhost:1325/provinces/${id}`);
+        await axios.delete(`http://localhost:1324/provinces/${id}`);
         enqueueSnackbar('Province deleted successfully', { variant: 'success' });
         fetchProvinces();
     } catch (error) {

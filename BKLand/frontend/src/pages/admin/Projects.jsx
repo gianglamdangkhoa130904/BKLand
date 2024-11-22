@@ -39,7 +39,7 @@ function Projects() {
   const fetchProjects = async () => {
     setLoading(true);
     try {
-      const response = await axios.get('http://localhost:1325/projects');
+      const response = await axios.get('http://localhost:1324/projects');
       setProjects(response.data.data);
     } catch (error) {
       enqueueSnackbar('Failed to fetch projects', { variant: 'error' });
@@ -50,7 +50,7 @@ function Projects() {
 
   const fetchProvinces = async () => {
     try {
-      const response = await axios.get('http://localhost:1325/provinces');
+      const response = await axios.get('http://localhost:1324/provinces');
       setProvinces(response.data.data);
     } catch (error) {
       enqueueSnackbar('Failed to fetch provinces', { variant: 'error' });
@@ -59,7 +59,7 @@ function Projects() {
 
   const fetchProjectTypes = async () => {
     try {
-      const response = await axios.get('http://localhost:1325/projectTypes');
+      const response = await axios.get('http://localhost:1324/projectTypes');
       setProjectTypes(response.data.data);
     } catch (error) {
       enqueueSnackbar('Failed to fetch project types', { variant: 'error' });
@@ -77,7 +77,7 @@ function Projects() {
   const handleCreateProject = async () => {
     console.log('Form data:', form);
     try {
-      await axios.post('http://localhost:1325/projects', form);
+      await axios.post('http://localhost:1324/projects', form);
       enqueueSnackbar('Project added successfully', { variant: 'success' });
       fetchProjects();
     } catch (error) {
@@ -91,7 +91,7 @@ function Projects() {
 
   const handleUpdateProject = async () => {
     try {
-      await axios.put(`http://localhost:1325/projects/${selectedProject._id}`, form);
+      await axios.put(`http://localhost:1324/projects/${selectedProject._id}`, form);
       enqueueSnackbar('Project updated successfully', { variant: 'success' });
       fetchProjects(); 
     } catch (error) {
@@ -103,7 +103,7 @@ function Projects() {
 
   const handleDeleteProject = async (id) => {
     try {
-      await axios.delete(`http://localhost:1325/projects/${id}`);
+      await axios.delete(`http://localhost:1324/projects/${id}`);
       enqueueSnackbar('Project deleted successfully', { variant: 'success' });
       fetchProjects();
     } catch (error) {

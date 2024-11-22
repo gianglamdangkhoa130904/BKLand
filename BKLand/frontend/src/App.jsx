@@ -26,6 +26,7 @@ import ApartmentList from './pages/admin/ApartmentList';
 import BuildingList from './pages/admin/BuildingList';
 import SubdivisionList from './pages/admin/SubdivisionList';
 import FailedPayment from './pages/customer/FailedPayment';
+import ResultPayment from './pages/customer/ResultPayment';
 const App = () => {
   return (
     <Routes>
@@ -39,7 +40,8 @@ const App = () => {
       <Route path='/customer/details' element={<CustomerDetails/>}/>
       <Route path='/payment' element={<PaymentPage/>}/>
       <Route path='/payment/return' element={<ReturnPayment/>}/>
-      <Route path='payment/returnfailed' element={<FailedPayment/>}/>
+      <Route path='/payment/returnfailed' element={<FailedPayment/>}/>
+      <Route path='/payment/result' element={<ResultPayment/>}/>
 
       <Route path="/admin/tickets" element={<Tickets />} />
       <Route path="/admin/profile" element={<Profile />} />

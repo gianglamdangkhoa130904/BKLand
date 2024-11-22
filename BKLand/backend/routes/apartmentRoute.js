@@ -148,5 +148,20 @@ router.get('/buildingDetails/:id', async (req, res) => {
     res.status(500).json({ message: 'Failed to fetch building details with apartments' });
   }
 });
+router.put('/updateStatus/:id', async (req, res) => {
+  const { id } = req.params;
+  try {
 
+    const updatedApartment = await Apartment.findByIdAndUpdate(id,req.body).populate('buildingID', 'buildingName');
+
+    if (!updatedApartment) {
+      return res.status(404).json({ message: 'Apartment not found' });
+    }
+
+    return res.status(200).json({ message: 'Apartment updated successfully', data: updatedApartment });
+  } catch (error) {
+    console.error('Error updating apartment:', error.message);
+    res.status(500).json({ message: 'Failed to update apartment' });
+  }
+});
 export default router;

@@ -32,7 +32,7 @@ function UserProfile() {
           throw new Error('User not logged in');
         }
 
-        const response = await axios.get(`https://bkland.onrender.com/users/${userId}`);
+        const response = await axios.get(`http://localhost:1324/users/${userId}`);
         const userData = {
           ...response.data,
           dob: response.data.dob ? new Date(response.data.dob).toISOString().split('T')[0] : ''
@@ -40,7 +40,7 @@ function UserProfile() {
         setUserInfo(userData);
 
         // Fetch ownership certificate
-        const certResponse = await axios.get(`https://bkland.onrender.com/ownership-certificates/${userId}`);
+        const certResponse = await axios.get(`http://localhost:1324/ownership-certificates/${userId}`);
         setOwnershipCert(certResponse.data);
 
         // Placeholder invoices data
@@ -66,7 +66,7 @@ function UserProfile() {
   const handleSave = async () => {
     try {
       const userId = Cookie.get('nameID');
-      await axios.put(`https://bkland.onrender.com/users/${userId}`, userInfo);
+      await axios.put(`http://localhost:1324/users/${userId}`, userInfo);
       setIsEditing(false);
     } catch (error) {
       console.error("Error updating profile:", error);

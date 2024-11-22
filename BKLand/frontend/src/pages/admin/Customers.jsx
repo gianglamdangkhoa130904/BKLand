@@ -44,7 +44,7 @@ function Customers() {
   }, []);
   const fetchUser = () => {
     axios
-    .get('http://localhost:1325/users')
+    .get('http://localhost:1324/users')
     .then((response) => {
       setCustomers(response.data.data);
       setLoading(false);
@@ -56,7 +56,7 @@ function Customers() {
   }
   // Handle delete action
   const handleDelete = async (id) => {
-    axios.delete(`http://localhost:1325/users/${id}`)
+    axios.delete(`http://localhost:1324/users/${id}`)
     .then((response) =>{
       enqueueSnackbar(`Xóa người dùng thành công`, { variant: 'success' });
       fetchUser();
@@ -82,7 +82,7 @@ function Customers() {
     //   customer.id === selectedCustomer.id ? selectedCustomer : customer
     // );
     console.log(selectedCustomer);
-    axios.put(`http://localhost:1325/users/${selectedCustomer._id}`, selectedCustomer)
+    axios.put(`http://localhost:1324/users/${selectedCustomer._id}`, selectedCustomer)
     .then((response) =>{
       enqueueSnackbar(`Cập nhật người dùng thành công`, { variant: 'success' });
       fetchUser();

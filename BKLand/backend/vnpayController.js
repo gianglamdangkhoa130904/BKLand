@@ -35,8 +35,8 @@ router.post('/payment', async (req, res) => {
   
     const paymentUrl = `${vnp_Url}?${querystring.stringify(vnp_Params, { encode: false })}`;
     return res.status(200).json({ paymentUrl });
-  });
-  router.get('/returnpayment', async (req, res) => {
+});
+router.get('/returnpayment', async (req, res) => {
     const vnp_Params = req.query;
 
   // Extract the secure hash

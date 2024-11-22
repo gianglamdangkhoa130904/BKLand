@@ -40,10 +40,10 @@ function Subdivision() {
   const fetchProjectDetailsAndSubdivisions = async (projectId) => {
     setIsLoading(true);
     try {
-      const projectResponse = await axios.get(`http://localhost:1325/projects/${projectId}`);
+      const projectResponse = await axios.get(`http://localhost:1324/projects/${projectId}`);
       setProjectDetails(projectResponse.data.project);
 
-      const subdivisionsResponse = await axios.get(`http://localhost:1325/subdivisions?project=${projectId}`);
+      const subdivisionsResponse = await axios.get(`http://localhost:1324/subdivisions?project=${projectId}`);
       setSubdivisions(subdivisionsResponse.data.data);
     } catch (error) {
       enqueueSnackbar('Không thể lấy dữ liệu: ' + (error.response?.data?.message || error.message), { variant: 'error' });
@@ -85,7 +85,7 @@ function Subdivision() {
   const handleCreateSubdivision = async () => {
     setIsLoading(true);
     try {
-      await axios.post('http://localhost:1325/subdivisions', {
+      await axios.post('http://localhost:1324/subdivisions', {
         ...form,
         project: id
       });
@@ -108,7 +108,7 @@ function Subdivision() {
   const handleUpdateSubdivision = async () => {
     setIsLoading(true);
     try {
-      await axios.put(`http://localhost:1325/subdivisions/${selectedSubdivision._id}`, {
+      await axios.put(`http://localhost:1324/subdivisions/${selectedSubdivision._id}`, {
         ...form,
         project: id
       });
@@ -130,7 +130,7 @@ function Subdivision() {
 
     setIsLoading(true);
     try {
-      await axios.delete(`http://localhost:1325/subdivisions/${subdivisionId}`);
+      await axios.delete(`http://localhost:1324/subdivisions/${subdivisionId}`);
       enqueueSnackbar('Xóa phân khu thành công', { variant: 'success' });
       await fetchProjectDetailsAndSubdivisions(id);
     } catch (error) {

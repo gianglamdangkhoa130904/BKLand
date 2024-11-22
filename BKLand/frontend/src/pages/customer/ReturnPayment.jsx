@@ -1,45 +1,45 @@
 import axios from 'axios';
 import React, { useEffect } from 'react'
-import { useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import Cookie from 'js-cookie'
 import { Box, AbsoluteCenter } from '@chakra-ui/react';
+import { useSnackbar } from 'notistack';
 const ReturnPayment = () => {
+  const {enqueueSnackbar} = useSnackbar(); 
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
-
-  const orderId = queryParams.get('orderId');
-  const amount = queryParams.get('amount');
-  const paymentStatus = queryParams.get('status');
-
-  // const order = orderId.substring(9);
-  // const apartmentID = order.split('/')[0];
-  // const customerID = order.split('/')[1];
-  const fetchData = async () => {
-    const apartment = await axios.get(`http://localhost:1324/apartments/${Cookie.get('apartment')}`);
-    console.log(apartment.data.data);
-    const customer = await axios.get(`http://localhost:1324/users/${Cookie.get('customer')}`);
-    console.log(customer.data);
-    console.log(Cookie.get('statusPay'));
-    console.log(Cookie.get('apartment'));
-    console.log(Cookie.get('customer'));
-  }
-  const processPayment_Buy = () => {
-
-  }
-  const processPayment_Rent = () => {
-
-  }
+  const navigate = useNavigate();
+  const orderId = queryParams.get('vnp_OrderInfo');
+  const amount = queryParams.get('vnp_Amount') / 100;
+  const paymentStatus = queryParams.get('vnp_TransactionStatus');
   useEffect(() => {
-    console.log(orderId);
-    console.log(amount);
-    console.log(paymentStatus);
-    // fetchData();
+    const apartment = Cookie.get('apartment');
+    if(paymentStatus === '02'){
+      navigate('/home');
+      enqueueSnackbar('Thanh toán thất bại', { variant: 'warning' });
+    }
+    else if(paymentStatus === '00'){
+      const data = {
+        orderStatus: 'Đã thanh toán'
+      }
+      axios.put(`https://bkland.onrender.com/order/${orderId.substring(24)}`, data)
+      .then((response) => {
+        // console.log(response.data);
+        const dataAparment = {
+          apartmentStatus: 'Đã đặt cọc'
+        }
+        axios.put(`https://bkland.onrender.com/apartments/updateStatus/${apartment}`, dataAparment)
+        .then((response) => {
+          console.log(response.data.data);
+        })
+      })
+    }
   }, [])
   return (
     <>
     <Box position="relative" className='h-screen bg-gradient-to-tl from-cyan-50 to-cyan-500 '>
       <AbsoluteCenter p="4" textAlign="center">
-        {paymentStatus == 1 ? (
+        {paymentStatus === '00' ? (
         <Box fontSize="2xl" textColor="black" fontWeight="bold" p='6' boxShadow="dark-lg" borderRadius="3xl" className='bg-white'>
           Thanh toán thành công
         </Box>
@@ -47,6 +47,7 @@ const ReturnPayment = () => {
         <Box fontSize="2xl" textColor="black" fontWeight="bold" p='6' boxShadow="dark-lg" borderRadius="3xl" className='bg-white'>Thanh toán thất bại</Box>
       )}
       </AbsoluteCenter>
+      <Link to={'/home'}><Button>Về trang chủ</Button></Link>
     </Box>
     
     </>

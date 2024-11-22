@@ -41,7 +41,7 @@ function ApartmentList() {
   const fetchApartments = async () => {
     setLoading(true);
     try {
-      const response = await axios.get('https://bkland.onrender.com/apartments');
+      const response = await axios.get('http://localhost:1324/apartments');
       setApartments(response.data.data);
     } catch (error) {
       enqueueSnackbar('Failed to fetch apartments', { variant: 'error' });
@@ -52,7 +52,7 @@ function ApartmentList() {
 
   const fetchBuildings = async () => {
     try {
-      const response = await axios.get('https://bkland.onrender.com/buildings');
+      const response = await axios.get('http://localhost:1324/buildings');
       setBuildings(response.data.data);
     } catch (error) {
       enqueueSnackbar('Failed to fetch buildings', { variant: 'error' });
@@ -73,7 +73,7 @@ function ApartmentList() {
       formData.append('file', file); // Append the selected file
       Object.keys(form).forEach((key) => formData.append(key, form[key]));
 
-      const response = await axios.post('https://bkland.onrender.com/apartments', formData, {
+      const response = await axios.post('http://localhost:1324/apartments', formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
@@ -97,7 +97,7 @@ function ApartmentList() {
       formData.append('file', file); // Append the selected file
       Object.keys(form).forEach((key) => formData.append(key, form[key]));
 
-      await axios.put(`https://bkland.onrender.com/apartments/${selectedApartment._id}`, formData, {
+      await axios.put(`http://localhost:1324/apartments/${selectedApartment._id}`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }

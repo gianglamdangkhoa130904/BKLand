@@ -345,7 +345,7 @@ const CustomerDetails = () => {
           nationality: nationality,
           identityNumber: identityNumber
         }
-        axios.put(`https://bkland.onrender.com/users/${Cookie.get('nameID')}`, dataUser)
+        axios.put(`http://localhost:1324/users/${Cookie.get('nameID')}`, dataUser)
         .then((response) => {
           enqueueSnackbar('Cập nhật thông tin thành công', { variant: 'success' })
           const data = apartment;
@@ -364,12 +364,12 @@ const CustomerDetails = () => {
         //Đã đăng nhập
         else{
           setApartment(location.state.apartment);
-          axios.get(`https://bkland.onrender.com/users/${customerID}`)
+          axios.get(`http://localhost:1324/users/${customerID}`)
           .then((response) => {
             setCustomer(response.data);
             if(response.data.dob!= null){
               const birthday = new Date(response.data.dob);
-              const birthdayShow = `${birthday.getDay()}/${birthday.getMonth()}/${birthday.getFullYear()}`;
+              const birthdayShow = `${birthday.getDate()}/${birthday.getMonth()+1}/${birthday.getFullYear()}`;
               setShowDOB(birthdayShow);
             }
             setIdentityNumber(response.data.identityNumber != null ? response.data.identityNumber : '');
@@ -566,7 +566,7 @@ const CustomerDetails = () => {
                           <FormInput 
                               icon={FiUser}
                               label="Họ và tên"
-                              value={name}
+                              value={customer.name}
                               colors={colors}
                               disabled={'true'}
                           />
@@ -581,7 +581,7 @@ const CustomerDetails = () => {
                           <FormInput 
                               icon={FiCreditCard}
                               label="Số giấy tờ chứng thực"
-                              value={identityNumber}
+                              value={customer.identityNumber}
                               disabled={'true'}
                               colors={colors}
                           />
@@ -602,14 +602,14 @@ const CustomerDetails = () => {
                           <FormInput 
                               icon={FiPhone}
                               label="Số điện thoại"
-                              value={phone}
+                              value={customer.phone}
                               colors={colors}
                               disabled={'true'}
                           />
                           <FormInput 
                               icon={FiMail}
                               label="Email"
-                              value={email}
+                              value={customer.email}
                               colors={colors}
                               disabled={'true'}
                           />
@@ -617,7 +617,7 @@ const CustomerDetails = () => {
                               icon={FiFlag}
                               label="Quốc tịch"
                               type="text"
-                              value={nationality}
+                              value={customer.nationality}
                               colors={colors}
                               disabled={'true'}
                           />
@@ -813,7 +813,7 @@ const CustomerDetails = () => {
           bottom={0}
           left={0}
           right={0}
-          height="30px"
+          height="100px"
           onMouseEnter={() => setShowBottomBar(true)}
           zIndex={998}
       />

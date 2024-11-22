@@ -60,17 +60,17 @@ const TransactionPage = () => {
     const [dktqEmail, setDktqEmail] = useState('');
     const [dktqPhone, setDktqPhone] = useState('');
     const fetchProject = async () => {
-        const response = await axios.get('https://bkland.onrender.com/projects');
+        const response = await axios.get('http://localhost:1324/projects');
         setProjectList(response.data.data);
     }
     const fetchSubdivision = async (project) => {
         setProject(project.projectName);
-        const response = await axios.get(`https://bkland.onrender.com/subdivisions/project/${project._id}`);
+        const response = await axios.get(`http://localhost:1324/subdivisions/project/${project._id}`);
         setSubdivisionList(response.data.data);
     }
     const fetchBuilding = async (subdivision) => {
         setSubdivision(subdivision.subdivisionName);
-        const response = await axios.get(`https://bkland.onrender.com/buildings/subdivision/${subdivision._id}`);
+        const response = await axios.get(`http://localhost:1324/buildings/subdivision/${subdivision._id}`);
         setBuildingList(response.data.data);
     }
     const handleBuilding = async (building) => {
@@ -78,7 +78,7 @@ const TransactionPage = () => {
         setBuildingID(building._id);
     }
     const fetchApartment = async () => {
-        const response = await axios.get(`https://bkland.onrender.com/apartments/building/${buildingID}`);
+        const response = await axios.get(`http://localhost:1324/apartments/building/${buildingID}`);
         setApartmentList(response.data.data);
     }
     const handleApartment = (apartment) => {
@@ -128,7 +128,7 @@ const TransactionPage = () => {
                 projectID: visitedProjectID,
                 dateVisit: dktqDate
             }
-            axios.post(`https://bkland.onrender.com/contactTickets`, data)
+            axios.post(`http://localhost:1324/contactTickets`, data)
             .then((response) => {
                 console.log(response.data);
             });

@@ -22,13 +22,13 @@ const ApartmentDetails = () => {
             setLoading(true);
             const dataApartment = location.state;
         setApartment(dataApartment);
-        const responceBuilding = await axios.get(`https://bkland.onrender.com/buildings/${dataApartment.buildingID?._id}`);
+        const responceBuilding = await axios.get(`http://localhost:1324/buildings/${dataApartment.buildingID?._id}`);
         setBuilding(responceBuilding.data);
         // console.log(responceSubdivision.data);
-        const responceSubdivision = await axios.get(`https://bkland.onrender.com/subdivisions/${responceBuilding.data.subdivision?._id}`);
+        const responceSubdivision = await axios.get(`http://localhost:1324/subdivisions/${responceBuilding.data.subdivision?._id}`);
         setSubdivision(responceSubdivision.data);
         // console.log(responceSubdivision.data);
-        const responceProject = await axios.get(`https://bkland.onrender.com/projects/${responceSubdivision.data.project?._id}`);
+        const responceProject = await axios.get(`http://localhost:1324/projects/${responceSubdivision.data.project?._id}`);
         setProject(responceProject.data.project);
         // console.log(responceProject.data.project);
 
@@ -219,7 +219,7 @@ const ApartmentDetails = () => {
                         <div className="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-amber-900"></div>
 
                         {/* Price Content */}
-                        <div className="space-y-3">
+                        <div className="space-y-3" onMouseLeave={() => setShowPrice(false)}>
                             <div className="flex justify-between items-center">
                                 <span className="text-lg font-serif text-amber-900">Giá niêm yết</span>
                                 <span className="text-xl font-bold text-amber-900">
@@ -248,9 +248,9 @@ const ApartmentDetails = () => {
 
             {/* Hover Detection Zone */}
             <div 
-                className="fixed bottom-0 left-0 right-0 h-20 bg-transparent"
+                className="fixed bottom-0 left-0 right-0 h-32 bg-transparent"
                 onMouseEnter={() => setShowPrice(true)}
-                onMouseLeave={() => setShowPrice(false)}
+                
                 style={{ zIndex: 40 }}  // Đặt z-index thấp hơn price bar
             />
         </div>

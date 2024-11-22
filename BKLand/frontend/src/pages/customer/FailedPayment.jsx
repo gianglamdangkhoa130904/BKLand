@@ -16,8 +16,8 @@ const FailedPayment = () => {
     const apartmentID = order.split('/')[0];
     const customerID = order.split('/')[1];
     const fetchData = async () => {
-        const apartment = await axios.get(`https://bkland.onrender.com/apartments/${Cookie.get('apartment')}`);
-        const customer = await axios.get(`https://bkland.onrender.com/users/${Cookie.get('customer')}`);
+        const apartment = await axios.get(`http://localhost:1324/apartments/${Cookie.get('apartment')}`);
+        const customer = await axios.get(`http://localhost:1324/users/${Cookie.get('customer')}`);
     }
 
     useEffect(() => {

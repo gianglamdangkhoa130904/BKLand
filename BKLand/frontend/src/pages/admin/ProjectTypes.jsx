@@ -31,7 +31,7 @@ function ProjectTypes() {
   const fetchProjectTypes = async () => {
     setLoading(true);
     try {
-      const response = await axios.get('http://localhost:1325/projectTypes');
+      const response = await axios.get('http://localhost:1324/projectTypes');
       setProjectTypes(response.data.data);
     } catch (error) {
       enqueueSnackbar('Failed to fetch project types', { variant: 'error' });
@@ -54,7 +54,7 @@ function ProjectTypes() {
 
   const handleCreateProjectType = async () => {
     try {
-      await axios.post('http://localhost:1325/projectTypes', form);
+      await axios.post('http://localhost:1324/projectTypes', form);
       enqueueSnackbar('Project type added successfully', { variant: 'success' });
       fetchProjectTypes();
     } catch (error) {
@@ -66,7 +66,7 @@ function ProjectTypes() {
 
   const handleUpdateProjectType = async () => {
     try {
-      await axios.put(`http://localhost:1325/projectTypes/${selectedProjectType._id}`, form);
+      await axios.put(`http://localhost:1324/projectTypes/${selectedProjectType._id}`, form);
       enqueueSnackbar('Project type updated successfully', { variant: 'success' });
       fetchProjectTypes();
     } catch (error) {
@@ -78,7 +78,7 @@ function ProjectTypes() {
 
   const handleDeleteProjectType = async (id) => {
     try {
-      await axios.delete(`http://localhost:1325/projectTypes/${id}`);
+      await axios.delete(`http://localhost:1324/projectTypes/${id}`);
       enqueueSnackbar('Project type deleted successfully', { variant: 'success' });
       fetchProjectTypes();
     } catch (error) {

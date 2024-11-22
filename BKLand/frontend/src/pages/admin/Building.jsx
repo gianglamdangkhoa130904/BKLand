@@ -40,10 +40,10 @@ function Building() {
   const fetchSubdivisionDetailsAndBuildings = async (id) => {
     setIsLoading(true);
     try {
-      const subdivisionResponse = await axios.get(`https://bkland.onrender.com/subdivisions/${id}`);
+      const subdivisionResponse = await axios.get(`http://localhost:1324/subdivisions/${id}`);
       setSubdivisionDetails(subdivisionResponse.data); 
 
-      const buildingsResponse = await axios.get(`https://bkland.onrender.com/buildings?subdivision=${id}`);
+      const buildingsResponse = await axios.get(`http://localhost:1324/buildings?subdivision=${id}`);
       setBuildings(buildingsResponse.data.data);
     } catch (error) {
       enqueueSnackbar('Failed to fetch data', { variant: 'error' });
@@ -85,7 +85,7 @@ function Building() {
   const handleCreateBuilding = async () => {
     setIsLoading(true);
     try {
-      await axios.post('https://bkland.onrender.com/buildings', {
+      await axios.post('http://localhost:1324/buildings', {
         ...form,
         subdivision: subdivisionId
       });
@@ -108,7 +108,7 @@ function Building() {
   const handleUpdateBuilding = async () => {
     setIsLoading(true);
     try {
-      await axios.put(`https://bkland.onrender.com/buildings/${selectedBuilding._id}`, {
+      await axios.put(`http://localhost:1324/buildings/${selectedBuilding._id}`, {
         ...form,
         subdivision: subdivisionId
       });
@@ -130,7 +130,7 @@ function Building() {
 
     setIsLoading(true);
     try {
-      await axios.delete(`https://bkland.onrender.com/buildings/${buildingId}`);
+      await axios.delete(`http://localhost:1324/buildings/${buildingId}`);
       enqueueSnackbar('Xóa tòa thành công', { variant: 'success' });
       await fetchSubdivisionDetailsAndBuildings(subdivisionId);
     } catch (error) {

@@ -11,6 +11,7 @@ import buildingRoute from './routes/buildingRoute.js'
 import apartmentRoute from './routes/apartmentRoute.js'
 import ownershipCertificateRoute from './routes/ownershipCertificateRoute.js'
 import contactTicketRoute from './routes/contactTicketRoute.js'
+import orderRoute from './routes/orderRoute.js'
 import fileRoute from './routes/fileRoutes.js'
 import cors from 'cors'
 import swaggerJsDoc from 'swagger-jsdoc';
@@ -58,6 +59,7 @@ app.use('/certificates',ownershipCertificateRoute);
 app.use('/contactTickets',contactTicketRoute);
 app.use('/files',fileRoute);
 app.use('/vnpay', vnpayController);
+app.use('/order', orderRoute);
 
 mongoose.connect(mongoDBURL)
 .then(() => {

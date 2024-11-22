@@ -9,7 +9,7 @@ router.post('/payment', async (req, res) => {
     const { amount, orderId } = req.body;
     const vnp_TmnCode = 'DS93FZ5U'; // Mã TMN Code do VNPay cung cấp
     const vnp_Url = 'https://sandbox.vnpayment.vn/paymentv2/vpcpay.html'; // URL của VNPay (sử dụng sandbox cho môi trường test)
-    const vnp_ReturnUrl = 'https://bkland.netlify.app/payment/return'; // URL để VNPay trả kết quả về
+    const vnp_ReturnUrl = 'http://localhost:5174//payment/return'; // URL để VNPay trả kết quả về
   
     let vnp_Params = {};
     vnp_Params['vnp_Version'] = '2.1.0';

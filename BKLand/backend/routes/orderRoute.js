@@ -65,4 +65,15 @@ router.delete('/:id', async (request, response) => {
       response.status(500).send({ message: error.message });
     }
 });
+router.get('/:orderID', async (request, response) => {
+  try {
+      const { orderID } = request.params;
+      const orders = await Order.find({_id: orderID}).populate('customerID');
+
+      return response.status(200).json(orders);
+  } catch (error) {
+      console.log(error.message);
+      response.status(500).send({ message: error.message });
+  }
+});
 export default router;

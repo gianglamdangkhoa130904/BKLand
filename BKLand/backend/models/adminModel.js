@@ -16,6 +16,10 @@ const adminSchema = mongoose.Schema(
             required: true,
             default: 'employee'
         },
+        adminStatus:{
+            type: String,
+            required: true
+        }
     }
 );
 

@@ -15,12 +15,7 @@ router.post('/', async (request, response) => {
         });
       }
       else{
-          const newObject = {
-            ticketType: request.body.ticketType,
-            customerID: request.body.customerID,
-            apartmentID: request.body.apartmentID
-            };
-          const object = await OwnershipCertificate.create(newObject);
+          const object = await OwnershipCertificate.create(request.body);
           return response.status(201).send(object);
       }
     } catch (error) {

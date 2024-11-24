@@ -31,7 +31,7 @@ function Province() {
   const fetchProvinces = async () => {
     setLoading(true);
     try {
-      const response = await axios.get('http://localhost:1324/provinces');
+      const response = await axios.get('https://bkland.onrender.com/provinces');
       setProvinces(response.data.data);
     } catch (error) {
       enqueueSnackbar('Failed to fetch provinces', { variant: 'error' });
@@ -50,7 +50,7 @@ function Province() {
 
   const handleCreateProvince = async () => {
     try {
-      await axios.post('http://localhost:1324/provinces', form);
+      await axios.post('https://bkland.onrender.com/provinces', form);
       enqueueSnackbar('Province added successfully', { variant: 'success' });
       fetchProvinces();
     } catch (error) {
@@ -62,7 +62,7 @@ function Province() {
 
   const handleUpdateProvince = async () => {
     try {
-      await axios.put(`http://localhost:1324/provinces/${selectedProvince._id}`, form);
+      await axios.put(`https://bkland.onrender.com/provinces/${selectedProvince._id}`, form);
       enqueueSnackbar('Province updated successfully', { variant: 'success' });
       fetchProvinces();
     } catch (error) {
@@ -74,7 +74,7 @@ function Province() {
 
   const handleDeleteProvince = async (id) => {
     try {
-        await axios.delete(`http://localhost:1324/provinces/${id}`);
+        await axios.delete(`https://bkland.onrender.com/provinces/${id}`);
         enqueueSnackbar('Province deleted successfully', { variant: 'success' });
         fetchProvinces();
     } catch (error) {
@@ -117,7 +117,7 @@ function Province() {
         <Box flex="1" p={4} width="100%">
           <Heading mb={4}>Provinces</Heading>
           <Button colorScheme="blue" onClick={openAddModal} mb={4}>
-            Add Province
+            Thêm tỉnh thành
           </Button>
           <Table variant="simple" width="100%">
             <Thead>
@@ -160,7 +160,7 @@ function Province() {
               <ModalCloseButton />
               <ModalBody>
                 <FormControl mb={4}>
-                  <FormLabel>Province Name</FormLabel>
+                  <FormLabel>Tên tỉnh thành</FormLabel>
                   <Input
                     name="provinceName"
                     value={form.provinceName}
@@ -170,9 +170,9 @@ function Province() {
               </ModalBody>
               <ModalFooter>
                 <Button colorScheme="blue" mr={3} onClick={handleAddOrEdit}>
-                  {selectedProvince ? 'Update' : 'Add'}
+                  {selectedProvince ? 'Cập nhật' : 'Thêm'}
                 </Button>
-                <Button onClick={onClose}>Cancel</Button>
+                <Button onClick={onClose}>Hủy</Button>
               </ModalFooter>
             </ModalContent>
           </Modal>

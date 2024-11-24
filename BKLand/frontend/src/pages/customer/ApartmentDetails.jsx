@@ -15,20 +15,18 @@ const ApartmentDetails = () => {
     const [project, setProject] = useState('');
     const [activeTab, setActiveTab] = useState(0);
     const [showPrice, setShowPrice] = useState(false);
-
-    // Giữ nguyên logic fetchData
     const fetchData = async () => {
         try {
-            setLoading(true);
-            const dataApartment = location.state;
+        setLoading(true);
+        const dataApartment = location.state.apartmentData;
         setApartment(dataApartment);
-        const responceBuilding = await axios.get(`http://localhost:1324/buildings/${dataApartment.buildingID?._id}`);
+        const responceBuilding = await axios.get(`https://bkland.onrender.com/buildings/${dataApartment.buildingID?._id}`);
         setBuilding(responceBuilding.data);
         // console.log(responceSubdivision.data);
-        const responceSubdivision = await axios.get(`http://localhost:1324/subdivisions/${responceBuilding.data.subdivision?._id}`);
+        const responceSubdivision = await axios.get(`https://bkland.onrender.com/subdivisions/${responceBuilding.data.subdivision?._id}`);
         setSubdivision(responceSubdivision.data);
         // console.log(responceSubdivision.data);
-        const responceProject = await axios.get(`http://localhost:1324/projects/${responceSubdivision.data.project?._id}`);
+        const responceProject = await axios.get(`https://bkland.onrender.com/projects/${responceSubdivision.data.project?._id}`);
         setProject(responceProject.data.project);
         // console.log(responceProject.data.project);
 
@@ -46,24 +44,26 @@ const ApartmentDetails = () => {
         } finally {
             setLoading(false);
         }
-    };
-
-    // Giữ nguyên logic handleBuy_Apartment
+    }
     const handleBuy_Apartment = () => {
-        const data = {
-            apartment: apartment,
-            building: building.buildingName,
+        const data =  {apartment: apartment, 
+            building: building.buildingName, 
             subdivision: subdivision.subdivisionName,
-            project: project.projectName
-        };
+            project: project.projectName,
+            transactionType: location.state.transactionType};
         navigate('/customer/details', { state: data });
-    };
-
+    }
+    const handleRent_Apartment = () => {
+        const data =  {apartment: apartment, 
+            building: building.buildingName, 
+            subdivision: subdivision.subdivisionName,
+            project: project.projectName,
+            transactionType: location.state.transactionType};
+        navigate('/customer/details', { state: data });
+    }
     useEffect(() => {
         fetchData();
-    }, []);
-
-    // Component Loading/Error với style vintage
+    }, [])
     const TabContent = ({ isLoading, error, children }) => {
         if (isLoading) {
             return (
@@ -88,7 +88,7 @@ const ApartmentDetails = () => {
 
     return (
         <div className="bg-amber-50 min-h-screen relative">
-            <TopNavCustomer />
+            <TopNavCustomer/>
             
             <div className="max-w-6xl mx-auto pt-28 px-4">
                 {/* Gallery với style vintage */}
@@ -221,26 +221,56 @@ const ApartmentDetails = () => {
                         {/* Price Content */}
                         <div className="space-y-3" onMouseLeave={() => setShowPrice(false)}>
                             <div className="flex justify-between items-center">
-                                <span className="text-lg font-serif text-amber-900">Giá niêm yết</span>
-                                <span className="text-xl font-bold text-amber-900">
-                                    {apartment.sellingPrice} vnđ
-                                </span>
+                                {location.state.transactionType === 'buy' ? 
+                                (
+                                    <div>
+                                        <span className="text-lg text-amber-900 mr-2">
+                                            Giá niêm yết
+                                        </span>
+                                        <span className="text-xl font-bold text-amber-900">
+                                            {(apartment.sellingPrice * 1.12).toFixed(0)} vnđ
+                                        </span>
+                                        <div className="text-sm text-amber-700 italic">
+                                            Đã bao gồm VAT & KPBT
+                                        </div>
+                                    </div>
+                                ):(
+                                    <div>
+                                        <span className="text-lg font-serif text-amber-900 mr-2">
+                                            Giá thuê
+                                        </span>
+                                        <span className="text-xl font-bold text-amber-900">
+                                            {apartment.rentPrice} vnđ
+                                        </span>
+                                    </div>
+                                )}
+                                
                             </div>
                             
-                            <div className="text-sm text-amber-700 italic">
-                                Đã bao gồm VAT & KPBT
-                            </div>
                             
-                            <button
-                                onClick={handleBuy_Apartment}
-                                className="w-full py-3 text-white rounded-md font-serif
-                                        transition-all duration-300 hover:shadow-lg
-                                        transform hover:-translate-y-0.5 cursor-pointer
-                                        bg-amber-900 hover:bg-amber-800
-                                        border border-amber-950"
-                            >
-                                Đặt cọc 50.000.000 vnđ
-                            </button>
+                            {location.state.transactionType === 'buy' ? 
+                                (
+                                    <button
+                                        onClick={handleBuy_Apartment}
+                                        className="w-full py-3 text-white rounded-md font-serif
+                                                transition-all duration-300 hover:shadow-lg
+                                                transform hover:-translate-y-0.5 cursor-pointer
+                                                bg-amber-900 hover:bg-amber-800
+                                                border border-amber-950">
+                                        <div>Đặt cọc 50.000.000 vnđ</div>
+                                    </button>
+                                ):(
+                                    <button
+                                        onClick={handleRent_Apartment}
+                                        className="w-full py-3 text-white rounded-md font-serif
+                                                transition-all duration-300 hover:shadow-lg
+                                                transform hover:-translate-y-0.5 cursor-pointer
+                                                bg-amber-900 hover:bg-amber-800
+                                                border border-amber-950">
+                                        <div>Đặt căn</div>
+                                    </button>
+                                )}
+                            
                         </div>
                     </div>
                 </div>
@@ -250,7 +280,6 @@ const ApartmentDetails = () => {
             <div 
                 className="fixed bottom-0 left-0 right-0 h-32 bg-transparent"
                 onMouseEnter={() => setShowPrice(true)}
-                
                 style={{ zIndex: 40 }}  // Đặt z-index thấp hơn price bar
             />
         </div>

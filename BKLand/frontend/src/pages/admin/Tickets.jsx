@@ -22,7 +22,7 @@ function Tickets() {
   const fetchTickets = async () => {
     setLoading(true);
     try {
-      const response = await axios.get('http://localhost:1324/ownershipCertificates');
+      const response = await axios.get('https://bkland.onrender.com/certificates');
       setTickets(response.data.data);
     } catch (error) {
       enqueueSnackbar('Failed to fetch ownership certificates', { variant: 'error' });

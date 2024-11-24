@@ -43,7 +43,7 @@ function Apartment() {
       setError(null);
 
       // Fetch building details and apartments
-      const response = await axios.get(`http://localhost:1324/apartments/buildingDetails/${id}`);
+      const response = await axios.get(`https://bkland.onrender.com/apartments/buildingDetails/${id}`);
       if (response.data) {
         setBuildingDetails(response.data.building);
         setApartments(response.data.apartments);
@@ -90,11 +90,11 @@ function Apartment() {
     try {
       if (selectedApartment) {
         // Update existing apartment
-        await axios.put(`http://localhost:1324/apartments/${selectedApartment._id}`, form);
+        await axios.put(`https://bkland.onrender.com/apartments/${selectedApartment._id}`, form);
         enqueueSnackbar('Apartment updated successfully', { variant: 'success' });
       } else {
         // Create new apartment
-        await axios.post('http://localhost:1324/apartments', form);
+        await axios.post('https://bkland.onrender.com/apartments', form);
         enqueueSnackbar('Apartment added successfully', { variant: 'success' });
       }
       fetchBuildingDetailsAndApartments(buildingId);
@@ -107,7 +107,7 @@ function Apartment() {
   const handleDeleteApartment = async (apartmentId) => {
     try {
       setIsDeleting(true);
-      await axios.delete(`http://localhost:1324/apartments/${apartmentId}`);
+      await axios.delete(`https://bkland.onrender.com/apartments/${apartmentId}`);
       enqueueSnackbar('Apartment deleted successfully', { variant: 'success' });
       fetchBuildingDetailsAndApartments(buildingId);
     } catch (error) {

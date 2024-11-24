@@ -24,37 +24,80 @@ function UserProfile() {
   const [invoices, setInvoices] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const userId = Cookie.get('nameID');
-        if (!userId) {
-          throw new Error('User not logged in');
-        }
-
-        const response = await axios.get(`http://localhost:1324/users/${userId}`);
-        const userData = {
-          ...response.data,
-          dob: response.data.dob ? new Date(response.data.dob).toISOString().split('T')[0] : ''
-        };
-        setUserInfo(userData);
-
-        // Fetch ownership certificate
-        const certResponse = await axios.get(`http://localhost:1324/ownership-certificates/${userId}`);
-        setOwnershipCert(certResponse.data);
-
-        // Placeholder invoices data
-        setInvoices([
-          { id: 1, date: '2024-03-10', amount: 50000000, status: 'Paid' }
-        ]);
-
-        setLoading(false);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-        setLoading(false);
+  const handlePayment = async (order) => {
+    try {
+      if(order.orderType === 'Thanh toán đặt cọc căn hộ'){
+        const apartmentID = order.orderDescription.substring(9).split('/')[0]
+        // console.log(apartmentID);
+        const res = await axios.post('https://bkland.onrender.com/vnpay/payment', {
+            amount: order.orderAmount,
+            orderId: order._id,
+            returnURL: window.location.origin
+          });
+          window.location.href = res.data.paymentUrl; 
+          Cookie.set('apartment', apartmentID);
+          Cookie.set('transactionType', 'buy');
       }
-    };
+      else{
+        const apartmentID = order.orderDescription.substring(9).split('/')[0]
+        const responseApartment = await axios.get(`https://bkland.onrender.com/apartments/${apartmentID}`);
+        // console.log(responseApartment.data);
+        const rentDay = order.orderDescription.substring(9).split('/')[2]
+        // console.log(rentDay);
+        const numberOfRenDay = order.orderDescription.substring(9).split('/')[3]
+        // console.log(numberOfRenDay);
+        const res = await axios.post('https://bkland.onrender.com/vnpay/payment', {
+            amount: order.orderAmount,
+            orderId: order._id,
+            returnURL: window.location.origin
+          });
+          window.location.href = res.data.paymentUrl; 
+          Cookie.set('apartment', apartmentID);
+          Cookie.set('rentDay', rentDay);
+          Cookie.set('numberOfRentDay', numberOfRenDay);
+          Cookie.set('transactionType', 'rent');
+      }
+    } catch (error) {
+      console.error('Payment error:', error);
+    }
+  };
+  const handleDeleteOrder = (order) => {
+    axios.delete(`https://bkland.onrender.com/order/${order._id}`)
+    .then((response) => {
+      fetchUserData();
+    })
+  }
+  const fetchUserData = async () => {
+    try {
+      const userId = Cookie.get('nameID');
+      if (!userId) {
+        throw new Error('User not logged in');
+      }
 
+      const response = await axios.get(`https://bkland.onrender.com/users/${userId}`);
+      const userData = {
+        ...response.data,
+        dob: response.data.dob ? new Date(response.data.dob).toISOString().split('T')[0] : ''
+      };
+      setUserInfo(userData);
+
+      // Fetch ownership certificate
+      const certResponse = await axios.get(`https://bkland.onrender.com/certificates/user/${userId}`);
+      // console.log(certResponse.data.data)
+      setOwnershipCert(certResponse.data.data);
+      // console.log(userId);
+      // Placeholder invoices data
+      const orderResponse = await axios.get(`https://bkland.onrender.com/order/user/${userId}`)
+      console.log(orderResponse.data.data)
+      setInvoices(orderResponse.data.data);
+
+      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      setLoading(false);
+    }
+  };
+  useEffect(() => {
     fetchUserData();
   }, []);
 
@@ -66,7 +109,7 @@ function UserProfile() {
   const handleSave = async () => {
     try {
       const userId = Cookie.get('nameID');
-      await axios.put(`http://localhost:1324/users/${userId}`, userInfo);
+      await axios.put(`https://bkland.onrender.com/users/${userId}`, userInfo);
       setIsEditing(false);
     } catch (error) {
       console.error("Error updating profile:", error);
@@ -76,7 +119,10 @@ function UserProfile() {
   if (loading) {
     return <div className="min-h-screen bg-amber-50 flex items-center justify-center">Loading...</div>;
   }
-
+  const formatDate = (inputDate) => {
+    const formatDate = new Date(inputDate);
+    return (formatDate.getDate() < 10 ? ('0'+ formatDate.getDate()):(formatDate.getDate())) + '/' + (formatDate.getMonth() + 1) + '/' + formatDate.getFullYear()
+  }
   return (
     <>
       <TopNavCustomer/>
@@ -90,11 +136,11 @@ function UserProfile() {
           >
             {/* Header with Avatar */}
             <div className="flex items-center space-x-6 mb-8">
-              <div className="w-24 h-24 bg-amber-700 rounded-full flex items-center justify-center text-white text-3xl font-serif">
+              <div className="w-24 h-24 bg-amber-700 rounded-full flex items-center justify-center text-white text-3xl ">
                 {userInfo.name?.charAt(0)}
               </div>
               <div>
-                <h1 className="text-2xl font-serif text-amber-900">{userInfo.name}</h1>
+                <h1 className="text-2xl  text-amber-900">{userInfo.name}</h1>
                 <span className="px-3 py-1 bg-amber-100 text-amber-800 rounded-full text-sm">
                   @{userInfo.username}
                 </span>
@@ -108,7 +154,7 @@ function UserProfile() {
                   <button
                     key={index}
                     onClick={() => setActiveTab(index)}
-                    className={`pb-2 px-4 font-serif text-lg relative ${
+                    className={`pb-2 px-4  text-lg relative ${
                       activeTab === index 
                         ? 'text-amber-900 border-b-2 border-amber-900' 
                         : 'text-amber-600 hover:text-amber-800'
@@ -128,7 +174,7 @@ function UserProfile() {
                     <div className="grid grid-cols-2 gap-6">
                       <div className="space-y-4">
                         <div>
-                          <label className="block text-amber-900 mb-2 flex items-center font-serif">
+                          <label className="block text-amber-900 mb-2 flex items-center ">
                             <FiUser className="mr-2" />
                             Họ và tên
                           </label>
@@ -140,7 +186,7 @@ function UserProfile() {
                           />
                         </div>
                         <div>
-                          <label className="block text-amber-900 mb-2 flex items-center font-serif">
+                          <label className="block text-amber-900 mb-2 flex items-center ">
                             <FiMail className="mr-2" />
                             Email
                           </label>
@@ -152,7 +198,7 @@ function UserProfile() {
                           />
                         </div>
                         <div>
-                          <label className="block text-amber-900 mb-2 flex items-center font-serif">
+                          <label className="block text-amber-900 mb-2 flex items-center ">
                             <FiPhone className="mr-2" />
                             Số điện thoại
                           </label>
@@ -166,7 +212,7 @@ function UserProfile() {
                       </div>
                       <div className="space-y-4">
                         <div>
-                          <label className="block text-amber-900 mb-2 flex items-center font-serif">
+                          <label className="block text-amber-900 mb-2 flex items-center ">
                             <FiCalendar className="mr-2" />
                             Ngày sinh
                           </label>
@@ -179,7 +225,7 @@ function UserProfile() {
                           />
                         </div>
                         <div>
-                          <label className="block text-amber-900 mb-2 flex items-center font-serif">
+                          <label className="block text-amber-900 mb-2 flex items-center ">
                             <FiFlag className="mr-2" />
                             Quốc tịch
                           </label>
@@ -191,7 +237,7 @@ function UserProfile() {
                           />
                         </div>
                         <div>
-                          <label className="block text-amber-900 mb-2 flex items-center font-serif">
+                          <label className="block text-amber-900 mb-2 flex items-center ">
                             <FiCreditCard className="mr-2" />
                             CCCD/CMND
                           </label>
@@ -234,7 +280,7 @@ function UserProfile() {
                       ].map((field, index) => (
                         <div key={index} className="flex items-center space-x-4">
                           <field.icon className="text-amber-700" />
-                          <span className="font-serif text-amber-900">{field.label}:</span>
+                          <span className=" text-amber-900">{field.label}:</span>
                           <span>{field.value || 'Chưa cập nhật'}</span>
                         </div>
                       ))}
@@ -254,85 +300,98 @@ function UserProfile() {
             )}
 
             {activeTab === 1 && (
-              <div className="bg-amber-50 p-6 rounded-lg border-2 border-amber-900">
-                <h2 className="text-2xl font-serif text-amber-900 mb-6 text-center">
-                  Phiếu Sở Hữu Căn Hộ
-                </h2>
-                <div className="grid grid-cols-2 gap-6">
-                  <div className="space-y-4">
-                    <div className="flex justify-between border-b border-amber-200 pb-2">
-                      <span className="font-serif text-amber-900">Loại phiếu:</span>
-                      <span>{ownershipCert?.ticketType || 'N/A'}</span>
-                    </div>
-                    <div className="flex justify-between border-b border-amber-200 pb-2">
-                      <span className="font-serif text-amber-900">Ngày phát hành:</span>
-                      <span>{ownershipCert?.publishDate ? new Date(ownershipCert.publishDate).toLocaleDateString('vi-VN') : 'N/A'}</span>
-                    </div>
-                    <div className="flex justify-between border-b border-amber-200 pb-2">
-                      <span className="font-serif text-amber-900">Hiệu lực đến:</span>
-                      <span>{ownershipCert?.validityPeriod ? new Date(ownershipCert.validityPeriod).toLocaleDateString('vi-VN') : 'Không thời hạn'}</span>
-                    </div>
-                  </div>
-                  <div className="space-y-4">
-                    <div className="flex justify-between border-b border-amber-200 pb-2">
-                      <span className="font-serif text-amber-900">Trạng thái:</span>
-                      <span className={`px-2 py-1 rounded ${
-                        ownershipCert?.statusTicket === 'Active' 
-                          ? 'bg-green-100 text-green-800' 
-                          : 'bg-red-100 text-red-800'
-                      }`}>
-                        {ownershipCert?.statusTicket || 'N/A'}
-                      </span>
-                    </div>
-                    <div className="flex justify-between border-b border-amber-200 pb-2">
-                      <span className="font-serif text-amber-900">Mã căn hộ:</span>
-                      <span>{ownershipCert?.apartmentID || 'N/A'}</span>
-                    </div>
-                    <div className="flex justify-between border-b border-amber-200 pb-2">
-                      <span className="font-serif text-amber-900">Mã khách hàng:</span>
-                      <span>{ownershipCert?.customerID || 'N/A'}</span>
-                    </div>
-                  </div>
-                </div>
+              <div className="space-y-6">
+              <h2 className="text-2xl  text-amber-900 mb-6 text-center">
+                Phiếu sở hữu căn hộ
+              </h2>
+              <div className="overflow-hidden rounded-lg border-2 border-amber-900">
+                <table className="min-w-full divide-y divide-amber-200">
+                  <thead className="bg-amber-50">
+                    <tr>
+                      <th className="px-6 py-3 text-left text-amber-900 text-center">Số thứ tự</th>
+                      <th className="px-6 py-3 text-left text-amber-900 text-center">Ngày hiệu lực</th>
+                      <th className="px-6 py-3 text-left text-amber-900 text-center">Hiệu lực đến</th>
+                      <th className="px-6 py-3 text-left text-amber-900 text-center">Loại phiếu</th>
+                      <th className="px-6 py-3 text-left text-amber-900 text-center">Trạng thái</th>
+                    </tr>
+                  </thead>
+                  <tbody className="bg-white divide-y divide-amber-200 text-center">
+                    {ownershipCert.map((certificate, index) => (
+                      <tr key={index}>
+                        <td className="px-6 py-4 whitespace-nowrap ">
+                          {index + 1}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap ">
+                          {formatDate(certificate.publishDate)}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap ">
+                          {formatDate(certificate.validityPeriod)}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap ">
+                          {certificate.ticketType}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <span className={`px-2 py-1 rounded-full text-sm
+                            ${certificate.statusTicket === 'Active' 
+                              ? 'bg-green-100 text-green-800' 
+                              : 'bg-amber-100 text-amber-800'}`}
+                          >
+                            {certificate.statusTicket}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
+            </div>
             )}
 
             {activeTab === 2 && (
               <div className="space-y-6">
-                <h2 className="text-2xl font-serif text-amber-900 mb-6 text-center">
+                <h2 className="text-2xl  text-amber-900 mb-6 text-center">
                   Danh Sách Hóa Đơn
                 </h2>
                 <div className="overflow-hidden rounded-lg border-2 border-amber-900">
                   <table className="min-w-full divide-y divide-amber-200">
                     <thead className="bg-amber-50">
                       <tr>
-                        <th className="px-6 py-3 text-left font-serif text-amber-900">Mã hóa đơn</th>
-                        <th className="px-6 py-3 text-left font-serif text-amber-900">Ngày</th>
-                        <th className="px-6 py-3 text-left font-serif text-amber-900">Số tiền</th>
-                        <th className="px-6 py-3 text-left font-serif text-amber-900">Trạng thái</th>
+                        <th className="px-6 py-3 text-left text-amber-900 text-center">Mã hóa đơn</th>
+                        <th className="px-6 py-3 text-left text-amber-900 text-center">Ngày thanh toán</th>
+                        <th className="px-6 py-3 text-left text-amber-900 text-center">Số tiền</th>
+                        <th className="px-6 py-3 text-left text-amber-900 text-center">Trạng thái</th>
+                        <th className="px-6 py-3 text-left text-amber-900 text-center">Thao tác</th>
                       </tr>
                     </thead>
-                    <tbody className="bg-white divide-y divide-amber-200">
-                      {invoices.map((invoice) => (
-                        <tr key={invoice.id}>
-                          <td className="px-6 py-4 whitespace-nowrap font-serif">
-                            {invoice.id}
+                    <tbody className="bg-white divide-y divide-amber-200 text-center">
+                      {invoices.map((invoice, index) => (
+                        <tr key={index}>
+                          <td className="px-6 py-4 whitespace-nowrap text-center">
+                            {index + 1}
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap font-serif">
-                            {new Date(invoice.date).toLocaleDateString('vi-VN')}
+                          <td className="px-6 py-4 whitespace-nowrap ">
+                            {formatDate(invoice.orderDate)}
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap font-serif">
-                            {invoice.amount.toLocaleString('vi-VN')} VNĐ
+                          <td className="px-6 py-4 whitespace-nowrap ">
+                            {invoice.orderAmount} VNĐ
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
+                          <td className="px-6 py-4 whitespace-nowrap" >
                             <span className={`px-2 py-1 rounded-full text-sm
-                              ${invoice.status === 'Paid' 
+                              ${invoice.orderStatus === 'Đã thanh toán' 
                                 ? 'bg-green-100 text-green-800' 
                                 : 'bg-amber-100 text-amber-800'}`}
                             >
-                              {invoice.status}
+                              {invoice.orderStatus}
                             </span>
                           </td>
+                          {invoice.orderStatus === 'Đã thanh toán'?(
+                            <div className='hidden'></div>
+                          ):(
+                            <td className='px-6 py-4 whitespace-nowrap flex justify-center gap-2' >
+                              <button className='py-2 px-4 rounded-md font-bold text-white bg-red-500 hover:opacity-70' onClick={() => handleDeleteOrder(invoice)}>Hủy giao dịch</button>
+                              <button className='py-2 px-4 rounded-md font-bold text-white bg-green-500 hover:opacity-70'onClick={() => handlePayment(invoice)}>Thanh toán</button>
+                            </td>
+                          )}
                         </tr>
                       ))}
                     </tbody>

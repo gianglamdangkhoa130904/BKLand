@@ -5,7 +5,11 @@ const router = express.Router();
 
 router.post('/', async (request, response) => {
     try {
-      if (!request.body.customerName ||!request.body.phoneNumber ||!request.body.email ||!request.body.projectID ||!request.body.dateVisit) {
+      if (!request.body.customerName ||
+        !request.body.phoneNumber ||
+        !request.body.email ||
+        !request.body.projectID ||
+        !request.body.dateVisit) {
         return response.status(400).send({
           message: 'Send all required fields: Name, Phone number, Email, Project',
         });

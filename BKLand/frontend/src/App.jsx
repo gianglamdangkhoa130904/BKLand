@@ -25,8 +25,8 @@ import Apartment from './pages/admin/Apartment';
 import ApartmentList from './pages/admin/ApartmentList';
 import BuildingList from './pages/admin/BuildingList';
 import SubdivisionList from './pages/admin/SubdivisionList';
-import FailedPayment from './pages/customer/FailedPayment';
-import ResultPayment from './pages/customer/ResultPayment';
+import InvoiceList from './pages/admin/InvoiceList';
+import TransactionPage_Rent from './pages/customer/TransactionPage_Rent';
 const App = () => {
   return (
     <Routes>
@@ -34,14 +34,13 @@ const App = () => {
       <Route path='/home' element={<HomePage/>}/>
       <Route path='/profileCus' element={<ProfileCus/>}/>
       <Route path='/transaction' element={<TransactionPage/>}/>
+      <Route path='/transaction/rent' element={<TransactionPage_Rent/>}/>
       <Route path='/login' element={<Login/>}/>
       <Route path='/register' element={<Register/>}/>
       <Route path='/apartment/details' element={<ApartmentDetails/>}/>
       <Route path='/customer/details' element={<CustomerDetails/>}/>
       <Route path='/payment' element={<PaymentPage/>}/>
       <Route path='/payment/return' element={<ReturnPayment/>}/>
-      <Route path='/payment/returnfailed' element={<FailedPayment/>}/>
-      <Route path='/payment/result' element={<ResultPayment/>}/>
 
       <Route path="/admin/tickets" element={<Tickets />} />
       <Route path="/admin/profile" element={<Profile />} />
@@ -58,6 +57,7 @@ const App = () => {
       <Route path="/admin/apartmentlist" element={<ApartmentList/>} /> {/* CRUD Căn hộ */}
       <Route path="/admin/buildinglist" element={<BuildingList />} />   {/* CRUD Toà nhà*/}
       <Route path="/admin/subdivisionlist" element={<SubdivisionList />} />  {/* CRUD Phân khu */}
+      <Route path="/admin/invoices" element={<InvoiceList/>}/>
     </Routes>
   )
 }

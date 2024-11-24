@@ -69,14 +69,14 @@ const InfoRow = ({ label, value, colors, isBold }) => (
 );
 
 const CustomerDetails = () => {
-  const [showBottomBar, setShowBottomBar] = useState(false);
+    const [showBottomBar, setShowBottomBar] = useState(false);
     const { enqueueSnackbar } = useSnackbar();
-    const toast = useToast()
     const location = useLocation();
     const navigate = useNavigate();
     const [dataApartment, setData] = useState('');
     const [apartment, setApartment] = useState('');
     const [customer, setCustomer] = useState('');
+    const [isShowMenuNationality, setIsShowMenuNationality] = useState(false);
     const nationalities = [
       "Afghan",
       "Albanian",
@@ -278,8 +278,12 @@ const CustomerDetails = () => {
     const[nationality, setNationality] = useState('');
     const[identityNumber, setIdentityNumber] = useState('');
 
+    const[startRent, setStartRent] = useState('');
+    const[numberOfRentDay, setNumberOfRentDay] = useState('');
+    const[isShowNumberRent, setIsShowNumberRent] = useState(false);
+
     const[showDob, setShowDOB] = useState('');
-    
+    const[activeTab, setActiveTab] = useState('infor');
     const colors = {
       background: '#F5E6D3',
       primary: '#8B7355',
@@ -303,6 +307,12 @@ const CustomerDetails = () => {
   
       return age >= 20;
     };
+    function isFutureDate(inputDate) {
+      const currentDate = new Date();
+      const selectedDate = new Date(inputDate) // Lấy ngày hiện tại
+      // So sánh inputDate với ngày hiện tại, bỏ qua thời gian
+      return selectedDate.setHours(0, 0, 0, 0) > currentDate.setHours(0, 0, 0, 0);
+    }
 
     function isValidIdentityNumber(INumber) {
       const lengthCheck = INumber.length == 12;
@@ -345,13 +355,86 @@ const CustomerDetails = () => {
           nationality: nationality,
           identityNumber: identityNumber
         }
-        axios.put(`http://localhost:1324/users/${Cookie.get('nameID')}`, dataUser)
+        axios.put(`https://bkland.onrender.com/users/${Cookie.get('nameID')}`, dataUser)
         .then((response) => {
           enqueueSnackbar('Cập nhật thông tin thành công', { variant: 'success' })
-          const data = apartment;
+          const data = {
+            apartment: apartment,
+            transactionType: location.state.transactionType
+          };
           navigate('/payment', {state: data});
         })
       }
+    }
+    const handleRent_Customer = () => {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      const phoneRegex = /^\+?(\d{1,3})?[-.\s]?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}$/;
+      if(name === '' || email === '' || phone === '' || dob === '' || nationality === '' || identityNumber === ''){
+        enqueueSnackbar('Thiếu thông tin', { variant: 'warning' });
+      }
+      else if(name.length > 50){
+        enqueueSnackbar('Họ và tên có độ dài bé hơn 50 ký tự', { variant: 'warning' });
+      }
+      else if(email.length > 50){
+        enqueueSnackbar('Email có độ dài bé hơn 50 ký tự', { variant: 'warning' });
+      }
+      else if(!emailRegex.test(email)){
+        enqueueSnackbar('Email sai định dạng', { variant: 'warning' });
+      }
+      else if(phone.length != 10 || !phoneRegex.test(phone)){
+        enqueueSnackbar('Số điện thoại có độ dài 10 ký tự số', { variant: 'warning' });
+      }
+      else if(!isOverDOB(dob)){
+        enqueueSnackbar('Người dùng phải có độ tuổi trên 20', { variant: 'warning' });
+      }
+      else if(!isValidIdentityNumber(identityNumber)){
+        enqueueSnackbar('Số giấy tờ chứng thực cá nhân không hợp lệ', { variant: 'warning' });
+      }
+      else if(!isFutureDate(startRent) || startRent === ''){
+        enqueueSnackbar('Ngày bắt đầu thuê phải lớn hơn ngày hiện tại', { variant: 'warning' });
+      }
+      else if(numberOfRentDay === ''){
+        enqueueSnackbar('Vui lòng chọn số tháng thuê', { variant: 'warning' });
+      }
+      else{
+        const dataUser = {
+          name: name,
+          phone: phone,
+          email: email,
+          dob: dob,
+          nationality: nationality,
+          identityNumber: identityNumber
+        }
+        axios.put(`https://bkland.onrender.com/users/${Cookie.get('nameID')}`, dataUser)
+        .then((response) => {
+          enqueueSnackbar('Cập nhật thông tin thành công', { variant: 'success' })
+          const data = {
+            apartment: apartment,
+            transactionType: location.state.transactionType,
+            rentDay: startRent,
+            numberOfRentDay: numberOfRentDay
+          };
+          navigate('/payment', {state: data});
+        })
+      }
+    }
+    const handleTab = () => {
+      // console.log(activeTab);
+      if(activeTab === 'infor'){
+        document.getElementById('tabBar').style.transform = 'translate(185px)'
+        setActiveTab('update');
+      }
+      else if(activeTab === 'update'){
+        document.getElementById('tabBar').style.transform = 'translate(0px)'
+        setActiveTab('infor');
+      }
+
+    }
+    const handleMouseEnter = () => {
+      document.getElementById('acceptBar').style.transform = 'translate(0)'
+    }
+    const handleMouseLeave = () => {
+      document.getElementById('acceptBar').style.transform = 'translate(0, 150px)'
     }
     useEffect(() => {
         setData(location.state);
@@ -364,7 +447,7 @@ const CustomerDetails = () => {
         //Đã đăng nhập
         else{
           setApartment(location.state.apartment);
-          axios.get(`http://localhost:1324/users/${customerID}`)
+          axios.get(`https://bkland.onrender.com/users/${customerID}`)
           .then((response) => {
             setCustomer(response.data);
             if(response.data.dob!= null){
@@ -382,126 +465,6 @@ const CustomerDetails = () => {
         }
     },[])
   return (
-    // <>
-    //   <Container maxW="5xl" bg="white" mt="30px" boxShadow="dark-lg" p='4' borderRadius='md'>
-    //     <Text mb="30px" textAlign="center" fontSize="2xl" fontWeight="bold">Thông tin bên mua</Text>
-    //     <HStack w="full" justify="center" align="start">
-
-    //     <Tabs w='70%' position='relative' variant='unstyled'>
-    //       <TabList>
-    //         <Tab>Thông tin người dùng</Tab>
-    //         <Tab>Cập nhật thông tin</Tab>
-    //       </TabList>
-    //       <TabIndicator mt='-1.5px' height='2px' bg='blue.500' borderRadius='1px' />
-    //       <TabPanels>
-    //         <TabPanel className='flex justify-center' w="full" align="start" gap="4">
-    //           <VStack w="50%">
-    //             <Text alignSelf="start" ml="10px" fontWeight="bold">Họ và tên</Text>
-    //               <Input bg="white" type='text' value={name} disabled></Input>
-    //             <Text alignSelf="start" ml="10px" fontWeight="bold" >Ngày sinh</Text>
-    //               <Input bg="white" type='text' value={showDob} disabled></Input>
-    //             <Text alignSelf="start" ml="10px" fontWeight="bold">Số giấy tờ chứng thực cá nhân</Text>
-    //               <Input bg="white" type='text' value={identityNumber} disabled></Input>
-    //           </VStack>
-    //           <VStack w="50%" >
-    //             <Text alignSelf="start" ml="10px" fontWeight="bold">Số điện thoại</Text>
-    //               <Input bg="white" type='tel' value={phone} disabled></Input>
-    //             <Text alignSelf="start" ml="10px" fontWeight="bold">Email</Text>
-    //               <Input bg="white" type='email' value={email} disabled></Input>
-    //             <Text alignSelf="start" ml="10px" fontWeight="bold">Quốc tịch</Text>
-    //               <Input bg="white" type='email' value={nationality} disabled></Input>
-    //           </VStack>
-    //         </TabPanel>
-    //         <TabPanel className='flex justify-center' w="full" align="start" gap="4">
-    //           <VStack w="50%">
-    //             <Text alignSelf="start" ml="10px" fontWeight="bold">Họ và tên</Text>
-    //               <Input bg="white" type='text' placeholder='Nhập họ và tên...' value={name} onChange={(e) => setName(e.target.value)}></Input>
-    //             <Text alignSelf="start" ml="10px" fontWeight="bold">Ngày sinh</Text>
-    //               <Input bg="white" type='datetime-local' onChange={(e) => setDob(e.target.value)}></Input>
-    //             <Text alignSelf="start" ml="10px" fontWeight="bold">Số giấy tờ chứng thực cá nhân</Text>
-    //               <Input bg="white" type='text' placeholder='Nhập số giấy tờ...' value={identityNumber} onChange={(e) => {setIdentityNumber(e.target.value);}}></Input>
-    //           </VStack>
-    //           <VStack w="50%" >
-    //             <Text alignSelf="start" ml="10px" fontWeight="bold">Số điện thoại</Text>
-    //               <Input bg="white" type='tel' placeholder='Nhập số điện thoại...' value={phone} onChange={(e) => setPhone(e.target.value)}></Input>
-    //             <Text alignSelf="start" ml="10px" fontWeight="bold">Email</Text>
-    //               <Input bg="white" type='email' placeholder='Nhập email...' value={email} onChange={(e) => setEmail(e.target.value)}></Input>
-    //             <Text alignSelf="start" ml="10px" fontWeight="bold">Quốc tịch</Text>
-    //             <Menu w="30%" h="100%" m="0px" >
-    //               {nationality != '' ? (
-    //                 <MenuButton as={Button} bg="white" border='1px' borderColor='gray.300' w='100%' rightIcon={<VscTriangleDown/>} >
-    //                   {nationality}
-    //                 </MenuButton>
-    //               ) : (
-    //                 <MenuButton as={Button} bg="white" border='1px' borderColor='gray.300' w='100%' rightIcon={<VscTriangleDown/>}>
-    //                   Chọn quốc tịch
-    //                 </MenuButton>
-    //               )}
-    //               <MenuList overflow="hidden scroll" h="200px">
-    //                 {nationalities.map((area, index) => (
-    //                   <MenuItem key={index} onClick={(e) => setNationality(area)}>{area}</MenuItem>
-    //                 ))}
-    //               </MenuList>
-    //             </Menu>
-    //           </VStack>
-    //         </TabPanel>
-    //       </TabPanels>
-    //     </Tabs>
-
-          
-    //       {/* Thông tin căn hộ */}
-    //       <VStack w="30%" borderRadius="md" boxShadow="2xl" gap="0">
-    //         <Box w="full" h="200px">
-    //           <Image w="full" h="full" src={CanHo} objectFit="cover" borderTopRadius="md"/>
-    //         </Box>
-    //         <HStack p='2' w="100%" divider={<StackDivider borderColor='gray.200' />}>
-    //           <Text>Căn hộ {dataApartment.project}</Text>
-    //           {apartment.floor === '' ? (
-    //             <Text display="none" textAlign="start"></Text>
-    //           ) : (
-    //             <Text textAlign="end">Tầng {apartment.floor}</Text>
-    //           )}
-    //         </HStack>
-    //         <HStack p='2' w="100%" divider={<StackDivider borderColor='gray.200' />}>
-    //           <Text>Phân khu {dataApartment.subdivision}</Text>
-    //           <Text>{dataApartment.building}</Text>
-    //         </HStack>
-    //         <HStack divider={<StackDivider borderColor='gray.200' />} alignSelf="start" p='2'>
-    //           <Text>{apartment.numberOfBedroom} ngủ</Text>
-    //           <Text>{apartment.numberOfBedroom} toilet</Text>
-    //           <Text>{apartment.direction}</Text>
-    //         </HStack>
-    //         <StackDivider borderColor='gray.200' w="full"/>
-    //         <HStack w="100%" p='2'>
-    //           <Text w="50%" textAlign="start" fontWeight="bold">Tạm tính</Text>
-    //           <Text w="50%" textAlign="end">{(apartment.sellingPrice * 1.12).toFixed(0)} vnđ</Text>
-    //         </HStack>
-    //         <HStack w="100%" p='2'>
-    //           <Text w="50%" textAlign="start" alignSelf="start" fontWeight="bold">Tổng cộng</Text>
-    //           <VStack w="50%" gap="0">
-    //             <Text w="100%"  textAlign="end">{(apartment.sellingPrice * 1.12).toFixed(0)} vnđ</Text>
-    //             <Text w="100%"  textAlign="end" fontSize="x-small">Đã bao gồm VAT & KPBT</Text>
-    //           </VStack>
-    //         </HStack>
-    //       </VStack>
-    //     </HStack>
-    //   </Container>
-    //   <Flex pos="fixed" 
-    //   w="100%" h="100px" 
-    //   bottom="20px" maxW="2000px" 
-    //   justifyContent="center" alignItems="center">
-    //       <VStack w="30%" h="auto" bg="white" borderRadius="md" p="2" boxShadow="dark-lg">
-    //           <HStack w="100%" fontWeight="bold">
-    //               <Text w="50%">Giá niêm yết</Text>
-    //               <Text w="50%" textAlign="end">{(apartment.sellingPrice * 1.12).toFixed(0)} vnđ</Text>
-    //           </HStack>
-    //           <Text alignSelf="start" fontSize="small">Đã bao gồm VAT & KPBT</Text>
-    //           <Button bg="blue.900" textColor="white" w="100%" h="50px" onClick={handleBuy_Customer}>
-    //               Xác nhận thông tin
-    //           </Button>
-    //       </VStack>
-    //   </Flex>
-    // </>
     
     <Box 
       minH="100vh" 
@@ -792,15 +755,61 @@ const CustomerDetails = () => {
                       <Divider borderColor={colors.accent} />
                       
                       <VStack w="full" align="stretch">
-                          <InfoRow 
-                              label="Tổng giá trị"
-                              value={`${(apartment.sellingPrice * 1.12).toFixed(0)} VNĐ`}
-                              colors={colors}
-                              isBold
-                          />
-                          <Text fontSize="xs" color={colors.primary} textAlign="right">
-                              Đã bao gồm VAT & KPBT
-                          </Text>
+                      {location.state.transactionType === 'buy' ? (
+                        <div className='flex w-full '>
+                        <p className='w-1/2 text-md font-bold' style={{color:`${colors.secondary}`}}>Tổng giá trị: </p>
+                        <p className='w-1/2  text-end' style={{color:`${colors.primary}`}}>
+                            <b className='text-md'>{(apartment.sellingPrice * 1.12).toFixed(0)} VNĐ</b>
+                            <p className='text-sm'>Đã bao gồm VAT & KPBT</p>
+                        </p>
+                        </div>
+                        ):(
+                        <div>
+                            <div className='flex gap-4 pb-6' style={{borderBottom:`1px solid ${colors.accent}`}}>
+                            <div className='w-1/2'>
+                                <p>Ngày bắt đầu:</p>
+                                <input type='date' className='w-full px-2 py-2 rounded-md bg-white' value={startRent}
+                                style={{ border:`1px solid ${colors.accent}`}}
+                                onChange={(e) => setStartRent(e.target.value)}/>
+                            </div>
+                            <div className='w-1/2 relative'>
+                                <p>Số tháng thuê:</p>
+                                <div className='w-full px-2 py-2 rounded-md flex bg-white hover:cursor-pointer' onClick={() => setIsShowNumberRent(!isShowNumberRent)}
+                                style={{ border:`1px solid ${colors.accent}`}}>
+                                {numberOfRentDay === ''?(<p>Chọn số lượng tháng</p>):(<p>{numberOfRentDay} tháng</p>)}
+                                </div>
+                                {isShowNumberRent?(
+                                <div className='absolute right-0 bottom-12 bg-white h-22 w-full px-4 rounded-lg'
+                                style={{ border:`1px solid ${colors.accent}`}}>
+                                    <p className='py-2 hover:cursor-pointer' onClick={() => {
+                                    setIsShowNumberRent(!isShowNumberRent);
+                                    setNumberOfRentDay(1)}}
+                                    style={{borderBottom: `1px solid ${colors.accent}`}}>1 tháng</p>
+                                    <p className='py-2 hover:cursor-pointer' onClick={() => {
+                                    setIsShowNumberRent(!isShowNumberRent);
+                                    setNumberOfRentDay(2)}}
+                                    style={{borderBottom: `1px solid ${colors.accent}`}}>2 tháng</p>
+                                    <p className='py-2 hover:cursor-pointer' onClick={() => {
+                                    setIsShowNumberRent(!isShowNumberRent);
+                                    setNumberOfRentDay(3)}}>3 tháng</p>
+                                </div>
+                                ):(
+                                <div className='hidden'></div>
+                                )}
+                            </div>
+                            </div>
+                            <div className='flex w-full mt-2'>
+                            <p className='w-1/2 text-md font-bold' style={{color:`${colors.secondary}`}}>Tổng giá trị: </p>
+                            <p className='w-1/2  text-end' style={{color:`${colors.primary}`}}>
+                                {numberOfRentDay === ''?(
+                                <b className='text-md'>{(apartment.rentPrice)} VNĐ</b>
+                                ):(
+                                <b className='text-md'>{(apartment.rentPrice * numberOfRentDay).toFixed(0)} VNĐ</b>
+                                )}
+                            </p>
+                            </div>
+                        </div>
+                        )}
                       </VStack>
                   </VStack>
               </VStack>
@@ -856,15 +865,51 @@ const CustomerDetails = () => {
                   >
                       Tổng thanh toán
                   </Text>
-                  <Text 
-                      fontSize="xl" 
-                      fontWeight="bold" 
-                      color={colors.primary}
-                  >
-                      {apartment && (apartment.sellingPrice * 1.12).toFixed(0)} VNĐ
-                  </Text>
+                  {location.state.transactionType === 'buy' ? (
+                    <Text 
+                    fontSize="xl" 
+                    fontWeight="bold" 
+                    color={colors.primary}>
+                        {apartment && (apartment.sellingPrice * 1.12).toFixed(0)} VNĐ
+                    </Text>
+                    ):(
+                    numberOfRentDay === ''? (
+                        <Text 
+                        fontSize="xl" 
+                        fontWeight="bold" 
+                        color={colors.primary}>
+                            {(apartment.rentPrice)} VNĐ
+                        </Text>
+                    ):(
+                        <Text 
+                        fontSize="xl" 
+                        fontWeight="bold" 
+                        color={colors.primary}>
+                            {(apartment.rentPrice * numberOfRentDay).toFixed(0)} VNĐ
+                        </Text>
+                    )
+                    )}
+                  
               </HStack>
-              <Button
+              {location.state.transactionType === 'buy' ? (
+                <Button
+                w="full"
+                bg={colors.secondary}
+                color="white"
+                h="56px"
+                _hover={{ 
+                    bg: colors.primary,
+                    transform: 'translateY(-2px)',
+                    boxShadow: 'lg'
+                }}
+                onClick={handleBuy_Customer}
+                fontSize="lg"
+                transition="all 0.3s ease"
+            >
+                Xác Nhận Thông Tin
+            </Button>
+            ):(
+                <Button
                   w="full"
                   bg={colors.secondary}
                   color="white"
@@ -874,12 +919,14 @@ const CustomerDetails = () => {
                       transform: 'translateY(-2px)',
                       boxShadow: 'lg'
                   }}
-                  onClick={handleBuy_Customer}
+                  onClick={handleRent_Customer}
                   fontSize="lg"
                   transition="all 0.3s ease"
               >
                   Xác Nhận Thông Tin
               </Button>
+            )}
+              
           </VStack>
       </Flex>
 

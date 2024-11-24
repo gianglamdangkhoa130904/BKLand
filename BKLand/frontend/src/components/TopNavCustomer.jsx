@@ -88,7 +88,7 @@ const TopNavCustomer = () => {
             <Link to="/home">Bokaland</Link>
           </Text>
           <Text><Link to="/transaction">{t.buy}</Link></Text>
-          <Text><Link to="/transaction">{t.rent}</Link></Text>
+          <Text><Link to="/transaction/rent">{t.rent}</Link></Text>
           <Text>{t.about}</Text>
           <Text>{t.support}</Text>
         </HStack>

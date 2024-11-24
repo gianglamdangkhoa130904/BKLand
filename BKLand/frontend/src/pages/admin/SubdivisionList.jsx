@@ -35,7 +35,7 @@ function SubdivisionList() {
   const fetchSubdivisions = async () => {
     setLoading(true);
     try {
-      const response = await axios.get('http://localhost:1324/subdivisions');
+      const response = await axios.get('https://bkland.onrender.com/subdivisions');
       setSubdivisions(response.data.data);
     } catch (error) {
       enqueueSnackbar('Failed to fetch subdivisions', { variant: 'error' });
@@ -46,7 +46,7 @@ function SubdivisionList() {
 
   const fetchProjects = async () => {
     try {
-      const response = await axios.get('http://localhost:1324/projects');
+      const response = await axios.get('https://bkland.onrender.com/projects');
       setProjects(response.data.data);
     } catch (error) {
       enqueueSnackbar('Failed to fetch projects', { variant: 'error' });
@@ -63,7 +63,7 @@ function SubdivisionList() {
 
   const handleCreateSubdivision = async () => {
     try {
-      await axios.post('http://localhost:1324/subdivisions', form);
+      await axios.post('https://bkland.onrender.com/subdivisions', form);
       enqueueSnackbar('Subdivision added successfully', { variant: 'success' });
       fetchSubdivisions();
     } catch (error) {
@@ -75,7 +75,7 @@ function SubdivisionList() {
 
   const handleUpdateSubdivision = async () => {
     try {
-      await axios.put(`http://localhost:1324/subdivisions/${selectedSubdivision._id}`, form);
+      await axios.put(`https://bkland.onrender.com/subdivisions/${selectedSubdivision._id}`, form);
       enqueueSnackbar('Subdivision updated successfully', { variant: 'success' });
       fetchSubdivisions();
     } catch (error) {
@@ -87,7 +87,7 @@ function SubdivisionList() {
 
   const handleDeleteSubdivision = async (id) => {
     try {
-      await axios.delete(`http://localhost:1324/subdivisions/${id}`);
+      await axios.delete(`https://bkland.onrender.com/subdivisions/${id}`);
       enqueueSnackbar('Subdivision deleted successfully', { variant: 'success' });
       fetchSubdivisions();
     } catch (error) {

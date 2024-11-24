@@ -23,7 +23,7 @@ function Information() {
   const fetchTickets = async () => {
     setLoading(true);
     try {
-      const response = await axios.get('http://localhost:1324/contactTickets');
+      const response = await axios.get('https://bkland.onrender.com/contactTickets');
       setTickets(response.data.data);
     } catch (error) {
       enqueueSnackbar('Failed to fetch tickets', { variant: 'error' });

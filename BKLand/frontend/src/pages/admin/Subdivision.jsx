@@ -40,10 +40,10 @@ function Subdivision() {
   const fetchProjectDetailsAndSubdivisions = async (projectId) => {
     setIsLoading(true);
     try {
-      const projectResponse = await axios.get(`http://localhost:1324/projects/${projectId}`);
+      const projectResponse = await axios.get(`https://bkland.onrender.com/projects/${projectId}`);
       setProjectDetails(projectResponse.data.project);
 
-      const subdivisionsResponse = await axios.get(`http://localhost:1324/subdivisions?project=${projectId}`);
+      const subdivisionsResponse = await axios.get(`https://bkland.onrender.com/subdivisions?project=${projectId}`);
       setSubdivisions(subdivisionsResponse.data.data);
     } catch (error) {
       enqueueSnackbar('Không thể lấy dữ liệu: ' + (error.response?.data?.message || error.message), { variant: 'error' });
@@ -85,7 +85,7 @@ function Subdivision() {
   const handleCreateSubdivision = async () => {
     setIsLoading(true);
     try {
-      await axios.post('http://localhost:1324/subdivisions', {
+      await axios.post('https://bkland.onrender.com/subdivisions', {
         ...form,
         project: id
       });
@@ -108,7 +108,7 @@ function Subdivision() {
   const handleUpdateSubdivision = async () => {
     setIsLoading(true);
     try {
-      await axios.put(`http://localhost:1324/subdivisions/${selectedSubdivision._id}`, {
+      await axios.put(`https://bkland.onrender.com/subdivisions/${selectedSubdivision._id}`, {
         ...form,
         project: id
       });
@@ -130,7 +130,7 @@ function Subdivision() {
 
     setIsLoading(true);
     try {
-      await axios.delete(`http://localhost:1324/subdivisions/${subdivisionId}`);
+      await axios.delete(`https://bkland.onrender.com/subdivisions/${subdivisionId}`);
       enqueueSnackbar('Xóa phân khu thành công', { variant: 'success' });
       await fetchProjectDetailsAndSubdivisions(id);
     } catch (error) {

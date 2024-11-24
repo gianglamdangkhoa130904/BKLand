@@ -35,7 +35,7 @@ function Building() {
   const fetchBuildings = async () => {
     setLoading(true);
     try {
-      const response = await axios.get('http://localhost:1324/buildings');
+      const response = await axios.get('https://bkland.onrender.com/buildings');
       setBuildings(response.data.data);
     } catch (error) {
       enqueueSnackbar('Failed to fetch buildings', { variant: 'error' });
@@ -46,7 +46,7 @@ function Building() {
 
   const fetchSubdivisions = async () => {
     try {
-      const response = await axios.get('http://localhost:1324/subdivisions');
+      const response = await axios.get('https://bkland.onrender.com/subdivisions');
       setSubdivisions(response.data.data);
     } catch (error) {
       enqueueSnackbar('Failed to fetch subdivisions', { variant: 'error' });
@@ -63,7 +63,7 @@ function Building() {
 
   const handleCreateBuilding = async () => {
     try {
-      await axios.post('http://localhost:1324/buildings', form);
+      await axios.post('https://bkland.onrender.com/buildings', form);
       enqueueSnackbar('Building added successfully', { variant: 'success' });
       fetchBuildings();
     } catch (error) {
@@ -75,7 +75,7 @@ function Building() {
 
   const handleUpdateBuilding = async () => {
     try {
-      await axios.put(`http://localhost:1324/buildings/${selectedBuilding._id}`, form);
+      await axios.put(`https://bkland.onrender.com/buildings/${selectedBuilding._id}`, form);
       enqueueSnackbar('Building updated successfully', { variant: 'success' });
       fetchBuildings();
     } catch (error) {
@@ -87,7 +87,7 @@ function Building() {
 
   const handleDeleteBuilding = async (id) => {
     try {
-      await axios.delete(`http://localhost:1324/buildings/${id}`);
+      await axios.delete(`https://bkland.onrender.com/buildings/${id}`);
       enqueueSnackbar('Building deleted successfully', { variant: 'success' });
       fetchBuildings();
     } catch (error) {

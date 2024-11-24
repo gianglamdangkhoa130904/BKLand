@@ -14,7 +14,7 @@ const Login = () => {
     const navigate = useNavigate();
     const handleLogin = () => {
         axios
-        .get(`http://localhost:1324/users/username/${username}`)
+        .get(`https://bkland.onrender.com/users/username/${username}`)
         .then((response) => {
             setLoading(false);
             if(password === ''){
@@ -38,7 +38,23 @@ const Login = () => {
             }
         })
         .catch((error) => {
+          axios.get(`https://bkland.onrender.com/admins/username/${username}`)
+          .then((response) => {
+            console.log(response.data);
+            if(password === response.data.password){
+              enqueueSnackbar('Đăng nhập thành công', { variant: 'success' });
+              Cookie.set('adminID', response.data._id);
+              Cookie.set('adminRole', response.data.role);
+              Cookie.set('adminUsername', response.data.username);
+              navigate('/admin/dashboard'); 
+            }
+            else{
+              enqueueSnackbar('Sai mật khẩu', { variant: 'error' });
+            }
+          })
+          .catch((error) => {
             enqueueSnackbar('Người dùng không tồn tại', { variant: 'error' });
+          })
         });
     }
   return (

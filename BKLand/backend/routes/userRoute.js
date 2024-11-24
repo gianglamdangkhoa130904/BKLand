@@ -270,18 +270,17 @@ router.get('/:id', async (request, response) => {
  */
 router.put('/:id', async (request, response) => {
   try {
-    if (
-        !request.body.phone ||
-        !request.body.dob ||
-        !request.body.nationality
-    ) {
-      return response.status(400).send({
-        message: 'Send all required fields: phone, dob, nationality',
-      });
-    }
     const { id } = request.params;
+    const { name, phone, dob, nationality, statusAccount } = request.body;
 
-    const result = await User.findByIdAndUpdate(id, request.body);
+    const updateFields = {};
+    if (name) updateFields.name = name;
+    if (phone) updateFields.phone = phone;
+    if (dob) updateFields.dob = dob;
+    if (nationality) updateFields.nationality = nationality;
+    if (statusAccount) updateFields.statusAccount = statusAccount;
+
+    const result = await User.findByIdAndUpdate(id, updateFields, { new: true });
 
     if (!result) {
       return response.status(404).json({ message: 'User not found' });

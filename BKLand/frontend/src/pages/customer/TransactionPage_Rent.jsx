@@ -37,7 +37,8 @@ import { PiBuildingsFill } from "react-icons/pi";
 import { FaBuilding } from "react-icons/fa";
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
-const TransactionPage = () => {
+
+const TransactionPage_Rent = () => {
     const navigate = useNavigate();
     const { enqueueSnackbar } = useSnackbar();
     // Dùng cho Mua căn hộ
@@ -49,16 +50,10 @@ const TransactionPage = () => {
     const [subdivision, setSubdivision] = useState('');
     const [building, setBuilding] = useState('');
     const [buildingID, setBuildingID] = useState('');
-    
-    // Overlay
-    const { isOpen, onOpen, onClose } = useDisclosure()
-    // các const dùng cho Đăng ký tham quan 
-    const [visitedProjectID, setVisitedProjectID] = useState('');
-    const [dktqName, setDktqName] = useState('');
-    const [dktqProject, setDktqProject] = useState('');
-    const [dktqDate, setDktqDate] = useState('');
-    const [dktqEmail, setDktqEmail] = useState('');
-    const [dktqPhone, setDktqPhone] = useState('');
+    const [clickProject, setClickProject] = useState(false);
+    const [clickSubdivision, setClickSubdivision] = useState(false);
+    const [clickBuilding, setClickBuilding] = useState(false);
+
     const fetchProject = async () => {
         const response = await axios.get('https://bkland.onrender.com/projects');
         setProjectList(response.data.data);
@@ -82,65 +77,15 @@ const TransactionPage = () => {
     const handleApartment = (apartment) => {
         const data = {
             apartmentData: apartment,
-            transactionType: 'buy'
+            transactionType: 'rent'
         };
         navigate('/apartment/details', { state: data });
     }
-    const handleEmailChange = (event) => {
-        const value = event.target.value;
-        setDktqEmail(value);
-    };
-    const handleDateChange = (event) => {
-        const selectedDate = new Date(event.target.value); // Chuyển chuỗi thành đối tượng Date
-        setDktqDate(selectedDate);
-    };
-    const handlePhoneChange = (event) => {
-        const value = event.target.value;
-        setDktqPhone(value);
-    };
-    const handleVisitRegist = () => {
-        const today = new Date();
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        const phoneRegex = /^\+?(\d{1,3})?[-.\s]?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}$/;
-        if(dktqProject === '' || dktqDate === '' || dktqName === '' || dktqPhone === '' || dktqEmail === ''){
-            enqueueSnackbar('Thiếu thông tin', { variant: 'warning' });
-            enqueueSnackbar(dktqProject + dktqDate + dktqName + dktqPhone + dktqEmail, { variant: 'warning' });
-        }
-        else if(dktqDate < today){
-            enqueueSnackbar('Ngày tham quan không hợp lệ', { variant: 'warning' });
-        }
-        else if(dktqName.length > 30){
-            enqueueSnackbar('Họ và tên có độ dài không quá 30 ký tự', { variant: 'warning' });
-        }
-        else if(dktqEmail.length > 30 ){
-            enqueueSnackbar('Email có độ dài không quá 30 ký tự', { variant: 'warning' });
-        }
-        else if(!emailRegex.test(dktqEmail)){
-            enqueueSnackbar('Email sai định dạng', { variant: 'warning' });
-        }  
-        else if(dktqPhone.length != 10 || !phoneRegex.test(dktqPhone)){
-            enqueueSnackbar('Số điện thoại có độ dài 10 ký tự số', { variant: 'warning' });
-        }
-        else{
-            const data = {
-                customerName: dktqName,
-                phoneNumber: dktqPhone,
-                email: dktqEmail,
-                projectID: visitedProjectID,
-                dateVisit: dktqDate
-            }
-            axios.post(`https://bkland.onrender.com/contactTickets`, data)
-            .then((response) => {
-                console.log(response.data);
-            });
-            
-        }
-    }
     useEffect(() => {
         fetchProject();
-    }, [])
+    },[])
   return (
-    <>
+    <div style={{height: "auto"}}>
         <TopNavCustomer/>
         <Box w="100%" h="81"/>
         <Box position="relative" h="400px">
@@ -159,13 +104,13 @@ const TransactionPage = () => {
             color="white"
             bg="none">
                 <HStack w="100%" h="45%" gap="2">
-                    <Flex w="120px" h="100%" bg="white" borderTopRadius="md" justify="center" alignItems="center">
-                        <Text textColor="blue.700" fontWeight="bold">Mua</Text>
-                    </Flex>
                     <Flex w="120px" h="100%" bg="white" borderTopRadius="md" justify="center" alignItems="center" opacity="70%">
-                        <Link to='/transaction/rent'>
-                            <Text textColor="blue.700" fontWeight="bold">Thuê</Text>
+                        <Link to='/transaction'>
+                            <Text textColor="blue.700" fontWeight="bold">Mua</Text>
                         </Link>
+                    </Flex>
+                    <Flex w="120px" h="100%" bg="white" borderTopRadius="md" justify="center" alignItems="center">
+                        <Text textColor="blue.700" fontWeight="bold">Thuê</Text>
                     </Flex>
                 </HStack>
                 <HStack w="100%" h="55%" bg="0" gap="5">
@@ -224,66 +169,6 @@ const TransactionPage = () => {
         </Box>
         {apartmentList.length == 0 ? (
         <Container maxW='5xl' h="auto" p="0" marginTop="150px">
-            <HStack h="360px">
-                <VStack w="50%" p="4">
-                    <Text fontSize="xx-large" fontWeight="bold">Đăng ký tham quan dự án và căn hộ mẫu BKLand</Text>
-                    <Text fontSize="large">Để Quý khách hàng có được cái nhìn trực quan, chân thực và đa dạng về các dự án của Vinhomes, mời Quý khách đăng ký tham quan dự án và căn hộ mẫu tại đây.</Text>
-                    <Button alignSelf="self-start" bg="blue.900" textColor="white" onClick={onOpen}>Đăng ký tham quan</Button>
-                    <Modal isOpen={isOpen} onClose={onClose}>
-                        <ModalOverlay />
-                        <ModalContent>
-                        <ModalHeader>
-                            <VStack>
-                                <Image src={bokaLogo} alt='logo' h="60px"></Image>
-                                <Text fontSize="larger" color="blue.900" fontWeight="bold">Đăng ký tham quan</Text>
-                            </VStack>
-                        </ModalHeader>
-                        <ModalCloseButton />
-                        <ModalBody>
-                            <VStack>
-                                <Menu>
-                                    <MenuButton as={Button} rightIcon={<FaChevronDown />} bg="white" w="100%" borderWidth='1px'>
-                                        {dktqProject === '' ? (<Text textAlign="start">Chọn dự án</Text>) : 
-                                        (<Text textAlign="start">{dktqProject}</Text>)}
-                                    </MenuButton>
-                                    <MenuList>
-                                        {projectList.length == 0 ? (
-                                            <MenuItem textColor="black">No result</MenuItem>
-                                        ) : (
-                                            projectList.map((project, index) => (
-                                                <MenuItem key={index} 
-                                                textColor="black"  
-                                                onClick={() => {setDktqProject(project.projectName);
-                                                    setVisitedProjectID(project._id)
-                                                }}
-                                                w="100%">
-                                                    {project.projectName}
-                                                </MenuItem> 
-                                            ))
-                                        )}
-                                    </MenuList>
-                                </Menu>
-                                <Input type='text' placeholder='Họ và tên' onChange={() => {setDktqName(event.target.value)}}></Input>
-                                <Input type='email' placeholder='Email' onChange={handleEmailChange}></Input>
-                                <Input type='tel' placeholder='Số điện thoại' onChange={handlePhoneChange}></Input>
-                                <Text fontSize="large" fontWeight="bold" alignSelf="start" >Lựa chọn thời gian tham quan</Text>
-                                <Input type='datetime-local' w="180px" onChange={handleDateChange}></Input>
-                                <Text fontSize="large" fontWeight="bold" alignSelf="start">Hình thức tham quan</Text>
-                                <Image src={HinhAnhThamQuan} w="120px"></Image>
-                                <Text>Trải nghiệm thực tế tại dự án</Text>
-                                <Text fontSize="small">Bằng việc bấm vào nút "Nhận tư vấn", bạn đồng ý với Chính Sách Bảo Mật Thông Tin của chúng tôi.</Text>
-                            </VStack>
-                        </ModalBody>
-                        <ModalFooter textAlign="center" justifyContent="center">
-                            <Button colorScheme='blue' onClick={handleVisitRegist}>
-                            Nhận tư vấn
-                            </Button>
-                        </ModalFooter>
-                        </ModalContent>
-                    </Modal>
-                </VStack>
-                <Image w="50%" src={DangKyThamQuan} h="100%"></Image>
-            </HStack>
             <VStack h="360px" marginTop="50px">
                 <Text fontSize="xx-large" alignSelf="self-start">Căn hộ tiêu biểu</Text>
                 <Box position="relative" w="100%" h="300px" bg="blue.800" borderRadius="md">
@@ -339,8 +224,8 @@ const TransactionPage = () => {
             ))}
         </Container>
         )}
-    </>
+    </div>
   )
 }
 
-export default TransactionPage
+export default TransactionPage_Rent

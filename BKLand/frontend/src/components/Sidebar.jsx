@@ -21,16 +21,16 @@ import {
   FiLayers,
   FiPackage,
   FiBox,
-  FiMap
+  FiMap,
+  FiFile
 } from 'react-icons/fi';
 import { Link } from 'react-router-dom';
-
+import Cookie from 'js-cookie'
 function Sidebar() {
   const { colorMode } = useColorMode();
   const bg = useColorModeValue('white', 'gray.800');
   const borderColor = useColorModeValue('gray.200', 'gray.800'); 
   const hoverBg = useColorModeValue('cyan.50', 'gray.700');
-
   return (
     <ChakraProvider>
       <Box
@@ -95,12 +95,16 @@ function Sidebar() {
             <Text>Khách hàng</Text>
           </HStack>
         </Link>
-        <Link to="/admin/employees">
-          <HStack spacing={4} w="full" px={3} py={2} borderRadius="md" _hover={{ bg: hoverBg }}>
-            <Icon as={FiLayers} boxSize={5} />
-            <Text>Nhân viên</Text>
-          </HStack>
-        </Link>
+        {Cookie.get('adminRole') === 'manager' ? (
+          <Link to="/admin/employees">
+            <HStack spacing={4} w="full" px={3} py={2} borderRadius="md" _hover={{ bg: hoverBg }}>
+              <Icon as={FiLayers} boxSize={5} />
+              <Text>Nhân viên</Text>
+            </HStack>
+          </Link>
+        ):(
+          <div className='hidden'></div>
+        )}
         <Link to="/admin/tickets">
           <HStack spacing={4} w="full" px={3} py={2} borderRadius="md" _hover={{ bg: hoverBg }}>
             <Icon as={FiPackage} boxSize={5} />
@@ -124,6 +128,12 @@ function Sidebar() {
               <Icon as={FiBox} boxSize={5} />
               <Text>Căn hộ</Text>
             </HStack>
+        </Link>
+        <Link to="/admin/invoices">
+          <HStack spacing={4} w="full" px={3} py={2} borderRadius="md" _hover={{ bg: hoverBg }}>
+            <Icon as={FiFile} boxSize={5} />
+            <Text>Hoá đơn</Text>
+          </HStack>
         </Link>
         </VStack>
       </Box>

@@ -18,7 +18,6 @@ import swaggerJsDoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
 import vnpayController from './vnpayController.js';
 import adminRoute from './routes/adminRoute.js'
-
 const app = express();
 
 app.use(express.json());

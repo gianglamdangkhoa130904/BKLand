@@ -54,6 +54,7 @@ const ReturnPayment = () => {
       axios.put(`https://bkland.onrender.com/apartments/updateStatus/${apartment}`, dataAparment)
       .then((response) => {
         // console.log(response.data.data);
+        await fetchOrderDetails()
       })
     })
   }
@@ -80,7 +81,7 @@ const ReturnPayment = () => {
         axios.post('https://bkland.onrender.com/certificates', dataOwnerShipCertificate)
         .then((response) => {
           console.log(response.data);
-          fetchOrderDetails()
+          await fetchOrderDetails()
         })
       })
     })

@@ -27,7 +27,7 @@ const PaymentPage = () => {
               returnURL: window.location.origin
             });
             window.location.href = res.data.paymentUrl; 
-            Cookie.set('apartment', location.state._id);
+            Cookie.set('apartment', location.state.apartment._id);
             Cookie.set('transactionType', location.state.transactionType);
         }
       }

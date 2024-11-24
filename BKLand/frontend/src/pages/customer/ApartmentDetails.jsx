@@ -125,7 +125,7 @@ const ApartmentDetails = () => {
                                 <button
                                     key={index}
                                     onClick={() => setActiveTab(index)}
-                                    className={`pb-2 px-4 font-serif text-lg relative
+                                    className={`pb-2 px-4  text-lg relative
                                         ${activeTab === index 
                                             ? 'text-amber-900 border-b-2 border-amber-900' 
                                             : 'text-amber-600 hover:text-amber-800'}`}
@@ -137,7 +137,7 @@ const ApartmentDetails = () => {
                     </div>
 
                     {/* Tab Content với style vintage */}
-                    <div className="mt-8 font-serif p-6 bg-amber-50 rounded-lg border-2 border-amber-200">
+                    <div className="mt-8  p-6 bg-amber-50 rounded-lg border-2 border-amber-200">
                         {activeTab === 0 && (
                             <TabContent isLoading={loading} error={error}>
                                 <div className="space-y-4">
@@ -236,7 +236,7 @@ const ApartmentDetails = () => {
                                     </div>
                                 ):(
                                     <div>
-                                        <span className="text-lg font-serif text-amber-900 mr-2">
+                                        <span className="text-lg  text-amber-900 mr-2">
                                             Giá thuê
                                         </span>
                                         <span className="text-xl font-bold text-amber-900">
@@ -252,7 +252,7 @@ const ApartmentDetails = () => {
                                 (
                                     <button
                                         onClick={handleBuy_Apartment}
-                                        className="w-full py-3 text-white rounded-md font-serif
+                                        className="w-full py-3 text-white rounded-md 
                                                 transition-all duration-300 hover:shadow-lg
                                                 transform hover:-translate-y-0.5 cursor-pointer
                                                 bg-amber-900 hover:bg-amber-800
@@ -262,7 +262,7 @@ const ApartmentDetails = () => {
                                 ):(
                                     <button
                                         onClick={handleRent_Apartment}
-                                        className="w-full py-3 text-white rounded-md font-serif
+                                        className="w-full py-3 text-white rounded-md 
                                                 transition-all duration-300 hover:shadow-lg
                                                 transform hover:-translate-y-0.5 cursor-pointer
                                                 bg-amber-900 hover:bg-amber-800

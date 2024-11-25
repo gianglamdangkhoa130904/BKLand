@@ -90,6 +90,7 @@ const Login = () => {
               <FiUser className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#8B7355]" />
               <input
                 type="text"
+                maxLength={20}
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 className="w-full pl-10 pr-4 py-3 border-2 border-[#8B7355] rounded-lg
@@ -110,6 +111,7 @@ const Login = () => {
               <input
                 type="password"
                 value={password}
+                maxLength={25}
                 onChange={(e) => setPassword(e.target.value)}
                 className="w-full pl-10 pr-4 py-3 border-2 border-[#8B7355] rounded-lg
                          bg-[#FFF8DC]/50 focus:outline-none focus:border-[#5C4033]

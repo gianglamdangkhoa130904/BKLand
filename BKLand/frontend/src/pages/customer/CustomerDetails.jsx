@@ -24,7 +24,7 @@ import {
 import { useSnackbar } from 'notistack';
 import { FiCalendar, FiCreditCard, FiMail, FiPhone, FiUser, FiFlag } from 'react-icons/fi';
 
-const FormInput = ({ icon: Icon, label, value, type = "text", colors, disabled, functionCode }) => (
+const FormInput = ({ icon: Icon, label, value, type = "text", colors, disabled, functionCode, lengthText }) => (
   <Box w="full">
       <Text 
           mb={2} 
@@ -37,6 +37,7 @@ const FormInput = ({ icon: Icon, label, value, type = "text", colors, disabled, 
       </Text>
       <Input
           type={type}
+          maxLength={lengthText}
           value={value || ''}
           bg={colors.input}
           borderColor={colors.accent}
@@ -308,10 +309,13 @@ const CustomerDetails = () => {
       return age >= 20;
     };
     function isFutureDate(inputDate) {
-      const currentDate = new Date();
-      const selectedDate = new Date(inputDate) // Lấy ngày hiện tại
-      // So sánh inputDate với ngày hiện tại, bỏ qua thời gian
-      return selectedDate.setHours(0, 0, 0, 0) > currentDate.setHours(0, 0, 0, 0);
+      const selectedDate = new Date(inputDate);
+      const currentDate = new Date(); // Ngày hiện tại
+      const oneMonthLater = new Date();
+      oneMonthLater.setMonth(currentDate.getMonth() + 1); // Ngày hiện tại + 1 tháng
+
+      // So sánh ngày nhập với khoảng thời gian hợp lệ
+      return selectedDate > currentDate && selectedDate < oneMonthLater;
     }
 
     function isValidIdentityNumber(INumber) {
@@ -606,6 +610,7 @@ const CustomerDetails = () => {
                               label="Họ và tên"
                               value={name}
                               colors={colors}
+                              lengthText={50}
                               functionCode={(e) => setName(e.target.value)}
                           />
                           <FormInput 
@@ -624,6 +629,7 @@ const CustomerDetails = () => {
                               icon={FiCreditCard}
                               label="Số giấy tờ chứng thực"
                               value={identityNumber}
+                              lengthText={12}
                               colors={colors}
                               functionCode={(e) => setIdentityNumber(e.target.value)}
                           />
@@ -645,12 +651,14 @@ const CustomerDetails = () => {
                               icon={FiPhone}
                               label="Số điện thoại"
                               value={phone}
+                              lengthText={10}
                               colors={colors}
                               functionCode={(e) => setPhone(e.target.value)}
                           />
                           <FormInput 
                               icon={FiMail}
                               label="Email"
+                              lengthText={50}
                               value={email}
                               colors={colors}
                               functionCode={(e) => setEmail(e.target.value)}

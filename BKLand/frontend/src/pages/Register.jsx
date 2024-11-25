@@ -109,6 +109,7 @@ const Register = () => {
                 <input
                   type="text"
                   value={name}
+                  maxLength={50}
                   onChange={(e) => setName(e.target.value)}
                   className="w-full pl-10 pr-4 py-3 border-2 border-[#8B7355] rounded-lg
                            bg-[#FFF8DC]/50 focus:outline-none focus:border-[#5C4033]
@@ -126,6 +127,7 @@ const Register = () => {
                 <input
                   type="email"
                   value={email}
+                  maxLength={50}
                   onChange={(e) => setEmail(e.target.value)}
                   className="w-full pl-10 pr-4 py-3 border-2 border-[#8B7355] rounded-lg
                            bg-[#FFF8DC]/50 focus:outline-none focus:border-[#5C4033]
@@ -143,6 +145,7 @@ const Register = () => {
                 <input
                   type="tel"
                   value={phone}
+                  maxLength={10}
                   onChange={(e) => setPhone(e.target.value)}
                   className="w-full pl-10 pr-4 py-3 border-2 border-[#8B7355] rounded-lg
                            bg-[#FFF8DC]/50 focus:outline-none focus:border-[#5C4033]
@@ -160,6 +163,7 @@ const Register = () => {
                 <input
                   type="text"
                   value={username}
+                  maxLength={20}
                   onChange={(e) => setUsername(e.target.value)}
                   className="w-full pl-10 pr-4 py-3 border-2 border-[#8B7355] rounded-lg
                            bg-[#FFF8DC]/50 focus:outline-none focus:border-[#5C4033]
@@ -177,6 +181,7 @@ const Register = () => {
                 <input
                   type="password"
                   value={password}
+                  maxLength={25}
                   onChange={(e) => setPassword(e.target.value)}
                   className="w-full pl-10 pr-4 py-3 border-2 border-[#8B7355] rounded-lg
                            bg-[#FFF8DC]/50 focus:outline-none focus:border-[#5C4033]
@@ -194,6 +199,7 @@ const Register = () => {
                 <input
                   type="password"
                   value={repassword}
+                  maxLength={25}
                   onChange={(e) => setRepassword(e.target.value)}
                   className="w-full pl-10 pr-4 py-3 border-2 border-[#8B7355] rounded-lg
                            bg-[#FFF8DC]/50 focus:outline-none focus:border-[#5C4033]

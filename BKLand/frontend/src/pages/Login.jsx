@@ -89,6 +89,7 @@ const Login = () => {
             <div className="relative">
               <FiUser className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#8B7355]" />
               <input
+                name="username"
                 type="text"
                 maxLength={20}
                 value={username}
@@ -109,6 +110,7 @@ const Login = () => {
             <div className="relative">
               <FiLock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#8B7355]" />
               <input
+                name="password"
                 type="password"
                 value={password}
                 maxLength={25}

@@ -126,6 +126,7 @@ const Login = () => {
           {/* Login Button */}
           <button
             onClick={handleLogin}
+            name="submit"
             className="w-full bg-[#8B7355] text-white py-3 rounded-lg mb-4
                      transform hover:bg-[#5C4033] transition-all duration-300
                      flex items-center justify-center gap-2 font-serif"

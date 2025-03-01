@@ -58,12 +58,6 @@ router.delete('/:id', async (req, res) => {
       return res.status(404).json({ message: 'Building not found' });
     }
 
-    const subdivisionCount = await Subdivision.countDocuments({ _id: building.subdivision }); 
-
-    if (subdivisionCount > 0) {
-      return res.status(400).json({ message: 'Cannot delete building because it is linked to a subdivision' });
-    }
-
     await Building.findByIdAndDelete(id);
     res.status(200).json({ message: 'Subdivision deleted successfully' });
   } catch (error) {

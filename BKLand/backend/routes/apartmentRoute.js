@@ -76,12 +76,6 @@ router.delete('/:id', async (req, res) => {
       return res.status(404).json({ message: 'Apartment not found' });
     }
 
-    const buildingCount = await Building.countDocuments({ _id: apartment.buildingID });
-
-    if (buildingCount > 0) {
-      return res.status(400).json({ message: 'Cannot delete apartment because it is linked to a building' });
-    }
-
     await Apartment.findByIdAndDelete(id);
     res.status(200).json({ message: 'Apartment deleted successfully' });
   } catch (error) {

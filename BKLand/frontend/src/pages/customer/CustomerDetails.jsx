@@ -24,7 +24,7 @@ import {
 import { useSnackbar } from 'notistack';
 import { FiCalendar, FiCreditCard, FiMail, FiPhone, FiUser, FiFlag } from 'react-icons/fi';
 
-const FormInput = ({ icon: Icon, label, value, type = "text", colors, disabled, functionCode, lengthText }) => (
+const FormInput = ({ icon: Icon, label, value, type = "text", colors, disabled, functionCode, lengthText, name}) => (
   <Box w="full">
       <Text 
           mb={2} 
@@ -36,6 +36,7 @@ const FormInput = ({ icon: Icon, label, value, type = "text", colors, disabled, 
           {label}
       </Text>
       <Input
+          name={name}
           type={type}
           maxLength={lengthText}
           value={value || ''}
@@ -612,6 +613,7 @@ const CustomerDetails = () => {
                               colors={colors}
                               lengthText={50}
                               functionCode={(e) => setName(e.target.value)}
+                              name={'nameCus'}
                           />
                           <FormInput 
                               icon={FiCalendar}
@@ -619,6 +621,7 @@ const CustomerDetails = () => {
                               type="datetime-local"
                               value={dob}
                               colors={colors}
+                              name={'dobCus'}
                               functionCode={(e) => {setDob(e.target.value); 
                                 const birthday = new Date(response.data.dob);
                                 const birthdayShow = `${birthday.getDay()}/${birthday.getMonth()}/${birthday.getFullYear()}`;
@@ -631,6 +634,7 @@ const CustomerDetails = () => {
                               value={identityNumber}
                               lengthText={12}
                               colors={colors}
+                              name={'iNumberCus'}
                               functionCode={(e) => setIdentityNumber(e.target.value)}
                           />
                       </VStack>
@@ -653,6 +657,7 @@ const CustomerDetails = () => {
                               value={phone}
                               lengthText={10}
                               colors={colors}
+                              name={'phoneCus'}
                               functionCode={(e) => setPhone(e.target.value)}
                           />
                           <FormInput 
@@ -661,6 +666,7 @@ const CustomerDetails = () => {
                               lengthText={50}
                               value={email}
                               colors={colors}
+                              name={'mailCus'}
                               functionCode={(e) => setEmail(e.target.value)}
                           />
                           <Box w="full">
@@ -681,6 +687,7 @@ const CustomerDetails = () => {
                                       color={colors.text}
                                       borderColor={colors.accent}
                                       border="1px"
+                                      name="btn_nationality"
                                       rightIcon={<VscTriangleDown />}
                                       _hover={{ bg: colors.accent, color: 'white' }}
                                   >
@@ -688,7 +695,7 @@ const CustomerDetails = () => {
                                   </MenuButton>
                                   <MenuList maxH="200px" overflow="auto">
                                       {nationalities.map((area, index) => (
-                                          <MenuItem key={index} onClick={(e) => setNationality(area)}>{area}</MenuItem>
+                                          <MenuItem key={index} onClick={(e) => setNationality(area)} name={"nationality_"+index}>{area}</MenuItem>
                                       ))}
                                   </MenuList>
                               </Menu>

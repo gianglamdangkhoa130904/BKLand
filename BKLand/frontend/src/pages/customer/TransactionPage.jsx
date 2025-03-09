@@ -179,7 +179,7 @@ const TransactionPage = () => {
                                     <MenuItem textColor="black">No result</MenuItem>
                                 ) : (
                                     projectList.map((project, index) => (
-                                        <MenuItem key={index} textColor="black"  onClick={() => fetchSubdivision(project)}>
+                                        <MenuItem key={index} textColor="black"  onClick={() => fetchSubdivision(project)} name={"project_" + index}>
                                             {project.projectName}
                                         </MenuItem> 
                                     ))
@@ -195,7 +195,7 @@ const TransactionPage = () => {
                                     <MenuItem textColor="black">No result</MenuItem>
                                 ) : (
                                     subdivisionList.map((subdivision, index) => (
-                                        <MenuItem key={index} textColor="black"  onClick={() => fetchBuilding(subdivision)}>
+                                        <MenuItem key={index} textColor="black"  onClick={() => fetchBuilding(subdivision)} name={"sub_" + index}>
                                             {subdivision.subdivisionName}
                                         </MenuItem> 
                                     ))
@@ -211,7 +211,7 @@ const TransactionPage = () => {
                                     <MenuItem textColor="black">No result</MenuItem>
                                 ) : (
                                     buildingList.map((building, index) => (
-                                        <MenuItem key={index} textColor="black"  onClick={() => fetchApartment(building)}>
+                                        <MenuItem key={index} textColor="black"  onClick={() => fetchApartment(building)} name={"build_" + index}>
                                             {building.buildingName}
                                         </MenuItem> 
                                     ))

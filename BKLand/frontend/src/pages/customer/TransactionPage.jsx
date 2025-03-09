@@ -171,7 +171,7 @@ const TransactionPage = () => {
                 <HStack w="100%" h="55%" bg="0" gap="5">
                     <HStack divider={<StackDivider borderColor='gray.200' />} spacing='6%' h="100%" m="0" bg="white" w="100%" justify="center" borderBottomRadius="md" borderRightRadius="md">
                         <Menu h="100%" m="0px" w="30%">
-                            <MenuButton as={Button} leftIcon={<TbBuildingFactory/>} rightIcon={<FaChevronDown />} bg="white">
+                            <MenuButton as={Button} leftIcon={<TbBuildingFactory/>} rightIcon={<FaChevronDown />} bg="white" name="btn_project">
                                 {project === '' ? (<Text>Chọn dự án</Text>) : (<Text>{project}</Text>)}
                             </MenuButton>
                             <MenuList>
@@ -187,7 +187,7 @@ const TransactionPage = () => {
                             </MenuList>
                         </Menu>
                         <Menu w="30%" h="100%" m="0px">
-                            <MenuButton as={Button} leftIcon={<PiBuildingsFill/>} rightIcon={<FaChevronDown />} bg="white">
+                            <MenuButton as={Button} leftIcon={<PiBuildingsFill/>} rightIcon={<FaChevronDown />} bg="white" name="btn_subdivision">
                                 {subdivision === '' ? (<Text>Chọn phân khu</Text>) : (<Text>{subdivision}</Text>)}
                             </MenuButton>
                             <MenuList>
@@ -203,7 +203,7 @@ const TransactionPage = () => {
                             </MenuList>
                         </Menu>
                         <Menu w="30%" h="100%" m="0px">
-                            <MenuButton as={Button} leftIcon={<FaBuilding/>} rightIcon={<FaChevronDown />} bg="white">
+                            <MenuButton as={Button} leftIcon={<FaBuilding/>} rightIcon={<FaChevronDown />} bg="white" name="btn_building">
                                 {building === '' ? (<Text>Chọn tòa</Text>) : (<Text>{building}</Text>)}
                             </MenuButton>
                             <MenuList>

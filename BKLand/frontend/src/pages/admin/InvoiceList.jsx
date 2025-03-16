@@ -174,7 +174,7 @@ function InvoiceList() {
               >
                 {customers.map((customer) => (
                   <option key={customer._id} value={customer._id}>
-                    {customer.name} - {customer.username} ({customer._id})
+                    {customer.name} - {customer.username} ({(customer._id).Substring(0, 3) + "..." + (customer._id).Substring(customerId.Length - 3)})
                   </option>
                 ))}
               </Select>
